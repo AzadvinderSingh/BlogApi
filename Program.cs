@@ -2,9 +2,12 @@ using BlogApi.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+<<<<<<< HEAD
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 
+=======
+>>>>>>> d5c1525c1b0324b5a8bb4d0c350ec7fdb3627c0c
 
 using Microsoft.EntityFrameworkCore;
 
@@ -59,6 +62,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+<<<<<<< HEAD
 // Serve static files
 app.UseDefaultFiles();
 app.UseStaticFiles();
@@ -91,3 +95,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.Run();
+=======
+
+if (app.Environment.IsDevelopment())
+{
+
+}
+
+
+app.Run();
+>>>>>>> d5c1525c1b0324b5a8bb4d0c350ec7fdb3627c0c

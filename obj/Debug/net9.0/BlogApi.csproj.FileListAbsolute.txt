@@ -162,6 +162,7 @@ C:\Users\Azadvinder Singh\BlogApi\obj\Debug\net9.0\BlogApi.genruntimeconfig.cach
 C:\Users\Azadvinder Singh\BlogApi\obj\Debug\net9.0\ref\BlogApi.dll
 C:\Users\Azadvinder Singh\BlogApi\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\Azadvinder Singh\BlogApi\bin\Debug\net9.0\BCrypt-Net-Next.dll
+<<<<<<< HEAD
 C:\Users\Azadvinder Singh\BlogApi\obj\Debug\net9.0\BlogApi.sourcelink.json
 C:\Users\Azadvinder Singh\BlogApi\bin\Debug\net9.0\publish\web.config
 C:\Users\Azadvinder Singh\BlogApi\bin\Debug\net9.0\publish\appsettings.Development.json
@@ -205,3 +206,5 @@ C:\Users\Azadvinder Singh\BlogApi\bin\Debug\net9.0\publish\publish\tsconfig.spec
 C:\Users\Azadvinder Singh\BlogApi\bin\Debug\net9.0\publish\tsconfig.app.json
 C:\Users\Azadvinder Singh\BlogApi\bin\Debug\net9.0\publish\tsconfig.json
 C:\Users\Azadvinder Singh\BlogApi\bin\Debug\net9.0\publish\tsconfig.spec.json
+=======
+>>>>>>> d5c1525c1b0324b5a8bb4d0c350ec7fdb3627c0c
