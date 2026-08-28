@@ -32,6 +32,8 @@ jobs:
         with:
           name: .net-app
           path: "${{ env.DOTNET_ROOT }}"
+
+  deploy:
     runs-on: windows-latest
     needs: build
     environment:
