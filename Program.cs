@@ -46,7 +46,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 // Configure CORS policy
-// TODO: for production, source the allowed origin(s) from configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularDev", policy =>
