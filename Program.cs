@@ -68,7 +68,6 @@ if (builder.Environment.IsDevelopment())
         builder.Configuration.GetConnectionString("DefaultConnection"));
 }
 
-// Add authorization, controllers, and API explorer
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
