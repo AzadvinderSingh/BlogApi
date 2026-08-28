@@ -75,7 +75,6 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-// Static files should be served early in the pipeline
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
