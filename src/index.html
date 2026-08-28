@@ -471,7 +471,7 @@
             </div>
             <div class="mb-3">
               <label for="year" class="form-label">Publication Year</label>
-              <input type="number" class="form-control" id="year" required>
+              <input type="number" class="form-control" id="publish_year" required>
             </div>
             <button type="submit" class="btn btn-primary">Edit Book</button>
           </form>
@@ -1536,22 +1536,25 @@
 
     function New_book() {
       const storedBook = JSON.parse(localStorage.getItem('books'));
-      if (storedBook) {
-        document.getElementById('title').textContent = storedBook.title;
-        document.getElementById('author').textContent = storedBook.author;
-        document.getElementById('year').textContent = "Published in " + storedBook.year;
+      if (storedBook && storedBook.length > 0) {
+        const lastIndex = storedBook.length - 1;
+        const lastBook = storedBook[lastIndex];
+        document.getElementById('title').textContent = lastBook.title;
+        document.getElementById('author').textContent = lastBook.author;
+        document.getElementById('year').textContent = "Published in " + lastBook.year;
       }
     }
 
 
-    function toggleLoginLogout(isLoggedIn) {
-      const loginButton = document.getElementById('Login');
-      if (isLoggedIn) {
-        loginButton.innerHTML = '<i class="fas fa-sign-out-alt" id="theme-icon"></i> Logout';
-      } else {
-        loginButton.innerHTML = '<i class="fas fa-moon" id="theme-icon"></i> Login';
-      }
-    }
+
+    /*  function toggleLoginLogout(isLoggedIn) {
+       const loginButton = document.getElementById('Login');
+       if (isLoggedIn) {
+         loginButton.innerHTML = '<i class="fas fa-sign-out-alt" id="theme-icon"></i> Logout';
+       } else {
+         loginButton.innerHTML = '<i class="fas fa-moon" id="theme-icon"></i> Login';
+       }
+     }  */
 
 
     document.getElementById('sidebarToggle').addEventListener('click', function () {
@@ -1641,7 +1644,7 @@
       if (buttonText === 'Login') {
         toggleLoginLogout(true);
       } else if (buttonText === 'Logout') {
-        localStorage.removeItem('user');
+        /* localStorage.removeItem('user'); */
         getBooks();
         location.reload();
         toggleLoginLogout(false);
@@ -1666,6 +1669,7 @@
 
       });
     }
+
 
 
     document.getElementById('quoteForm').onsubmit = e => {
@@ -1703,16 +1707,15 @@
     };
 
     document.getElementById('Login').onclick = () => {
-      let user = localStorage.getItem("user");
-      let UserData = JSON.parse(user);
-      if (UserData == null) {
-        const modal = new bootstrap.Modal(document.getElementById('LoginModal'));
-        document.getElementById('LoginForm').reset();
-        modal.show();
-      }
-      else {
-      }
-    };
+      /*  let user = localStorage.getItem("user");
+        let UserData = JSON.parse(user);
+        if (UserData == null) { */
+      const modal = new bootstrap.Modal(document.getElementById('LoginModal'));
+      document.getElementById('LoginForm').reset();
+      modal.show();
+    }
+
+
 
 
     document.getElementById('addBookForm').addEventListener('submit', function (e) {
@@ -1728,33 +1731,46 @@
         author,
         year
       };
-      fetch('http://localhost:5296/api/blogposts/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(book)
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to add book: ' + response.status);
-          }
-          return response.json();
-        })
-        .then(data => {
-          localStorage.setItem("books", JSON.stringify(data))
-          getBooks();
 
-          const modalEl = document.getElementById('addBookModal');
-          const modal = bootstrap.Modal.getInstance(modalEl);
-          modal.hide();
-          document.getElementById('addBookForm').reset();
+      let books = JSON.parse(localStorage.getItem('books')) || [];
 
+      books.push(book);
+
+      localStorage.setItem('books', JSON.stringify(books));
+
+      getBooks();
+      const modalEl = document.getElementById('addBookModal');
+      const modal = bootstrap.Modal.getInstance(modalEl);
+      modal.hide();
+
+      /*  fetch('http://localhost:5296/api/blogposts/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(book)
         })
-        .catch(error => {
-          console.error('Error adding book:', error);
-        });
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to add book: ' + response.status);
+            }
+            return response.json();
+          })
+          .then(data => {
+            localStorage.setItem("books", JSON.stringify(data))
+            getBooks();
+  
+            const modalEl = document.getElementById('addBookModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+            document.getElementById('addBookForm').reset();
+  
+          })
+          .catch(error => {
+            console.error('Error adding book:', error);
+          });  */
     });
+
 
 
     document.getElementById('register').addEventListener('click', function (e) {
@@ -1765,25 +1781,38 @@
         Password: document.getElementById('Password').value,
       };
 
-      fetch('http://localhost:5296/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(UserData)
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to add user: ' + response.status);
-          }
-          return response.json();
-        })
-        .then(data => {
-          console.log('user added:', data);
-        })
-        .catch(error => {
-          console.error('Error adding book:', error);
-        });
+      if (UserData.Username !== "") {
+        let users = JSON.parse(localStorage.getItem('user')) || [];
+
+        users.push(UserData);
+
+        localStorage.setItem('user', JSON.stringify(users));
+        getBooks();
+
+        const loginModalEl = document.getElementById('LoginModal');
+        const loginModal = bootstrap.Modal.getInstance(loginModalEl);
+        loginModal.hide();
+      }
+
+      /* fetch('http://localhost:5296/api/auth/register', {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json'
+         },
+         body: JSON.stringify(UserData)
+       })
+         .then(response => {
+           if (!response.ok) {
+             throw new Error('Failed to add user: ' + response.status);
+           }
+           return response.json();
+         })
+         .then(data => {
+           console.log('user added:', data);
+         })
+         .catch(error => {
+           console.error('Error adding book:', error);
+         }); */
     });
 
 
@@ -1803,55 +1832,71 @@
         alertDiv.classList.remove('d-block');
         alertDiv.classList.add('d-none');
       }
-
       let UserData = {
         Username: username,
         Password: password,
       };
 
-      fetch('http://localhost:5296/api/auth')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to fetch users: ' + response.status);
-          }
-          return response.json();
-        })
-        .then(users => {
-          const userFound = users.find(u => u.username === UserData.Username);
+      const users = JSON.parse(localStorage.getItem('user')) || [];
+      console.log("hello", users);
 
-          if (!userFound) {
-            const alertbutton = document.getElementById('alert_button');
-            alertbutton.classList.remove('d-none');
-            alertbutton.classList.add('d-block');
-          } else {
-            fetch('http://localhost:5296/api/auth/login', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(UserData)
-            })
-              .then(response => {
-                if (!response.ok) {
-                  throw new Error('Login failed: ' + response.status);
-                }
-                return response.json();
-              })
-              .then(data => {
-                localStorage.setItem("user", JSON.stringify({ Username: UserData.Username, data }));
-                getBooks();
-                const alertbutton = document.getElementById('alert_button');
-                alertbutton.classList.remove('d-block');
-                alertbutton.classList.add('d-none');
-                const loginModalEl = document.getElementById('LoginModal');
-                const loginModal = bootstrap.Modal.getInstance(loginModalEl);
-                loginModal.hide();
-              });
-          }
-        })
-        .catch(error => {
-          console.error('Error during login:', error);
-        });
+      const existingUser = users.find(user => user.Username === UserData.Username);
+
+      if (existingUser != undefined) {
+        getBooks();
+        const alertbutton = document.getElementById('alert_button');
+        alertbutton.classList.remove('d-block');
+        alertbutton.classList.add('d-none');
+        const loginModalEl = document.getElementById('LoginModal');
+        const loginModal = bootstrap.Modal.getInstance(loginModalEl);
+        loginModal.hide();
+      } else {
+        alert("User not found!");
+      }
+
+      /* fetch('http://localhost:5296/api/auth')
+         .then(response => {
+           if (!response.ok) {
+             throw new Error('Failed to fetch users: ' + response.status);
+           }
+           return response.json();
+         })
+         .then(users => {
+           const userFound = users.find(u => u.username === UserData.Username);
+ 
+           if (!userFound) {
+             const alertbutton = document.getElementById('alert_button');
+             alertbutton.classList.remove('d-none');
+             alertbutton.classList.add('d-block');
+           } else {
+             fetch('http://localhost:5296/api/auth/login', {
+               method: 'POST',
+               headers: {
+                 'Content-Type': 'application/json'
+               },
+               body: JSON.stringify(UserData)
+             })
+               .then(response => {
+                 if (!response.ok) {
+                   throw new Error('Login failed: ' + response.status);
+                 }
+                 return response.json();
+               })
+               .then(data => {
+                 localStorage.setItem("user", JSON.stringify({ Username: UserData.Username, data }));
+                 getBooks();
+                 const alertbutton = document.getElementById('alert_button');
+                 alertbutton.classList.remove('d-block');
+                 alertbutton.classList.add('d-none');
+                 const loginModalEl = document.getElementById('LoginModal');
+                 const loginModal = bootstrap.Modal.getInstance(loginModalEl);
+                 loginModal.hide();
+               });
+           }
+         })
+         .catch(error => {
+           console.error('Error during login:', error);
+         }) */
     });
 
 
@@ -1865,7 +1910,7 @@
   <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkLBB9QfyTHUdKm6uJLKtcrfbFz9Fp4kFtYpQy5ZUaLA&s=10" 
        alt="Girl in a jacket" 
        class="img-fluid" />
-  <h5 class="card-title" style="font-family: Arial, Helvetica, sans-serif;">${book.title}</h5>
+  <h5 class="card-title books_title" style="font-family: Arial, Helvetica, sans-serif;" data-title=${book.title} id="title_id">${book.title}</h5>
   <h6 class="card-subtitle mb-2 text-muted" style="font-family: Lato, sans-serif;">${book.author}</h6>  
   <p class="card-text" style="font-family: 'Open Sans', sans-serif;">Published in ${book.year}</p>
   <button class="btn btn-primary edit-btn" data-id="${book.id}">Edit</button>
@@ -1879,22 +1924,40 @@
 
       editBtn.onclick = () => {
         const modal = new bootstrap.Modal(document.getElementById('editBookModal'));
+        document.getElementById('EditBookForm').reset();
         modal.show();
       };
 
       document.getElementById('EditBookForm').addEventListener('submit', function (e) {
         e.preventDefault();
 
-        const updatedBook = {
-          id: book.id,
-          title: document.getElementById('editbookTitle').value,
-          author: document.getElementById('editBookAuthor').value,
-          year: parseInt(document.getElementById('year').value)
-        };
+        const titleInput = document.getElementById("title_id");
+        const editbook_title = document.getElementById("editbookTitle");
+        const authorInput = document.getElementById("editBookAuthor");
 
-        console.log(updatedBook);
+        const pubDateStr = document.getElementById('publish_year').value;
+        const year = parseInt(pubDateStr, 10);
+        let books_data = JSON.parse(localStorage.getItem("books")) || [];
+        let index = books_data.findIndex(books => books.title == titleInput.dataset.title)
+        if (index !== -1) {
+          const newBookData = {
+            title: editbook_title.value,
+            author: authorInput.value,
+            year: year
+          };
+          books_data[index] = newBookData;
+          localStorage.setItem("books", JSON.stringify(books_data));
 
-        fetch(`http://localhost:5296/api/BlogPosts/${book.id}`, {
+          const loginModalEl = document.getElementById('editBookModal');
+          const loginModal = bootstrap.Modal.getInstance(loginModalEl);
+
+          loginModal.hide();
+
+        } else {
+        }
+      })
+
+      /*  fetch(`http://localhost:5296/api/BlogPosts/${book.id}`, {
           method: 'PUT', // Correct method for update
           headers: {
             'Content-Type': 'application/json'
@@ -1923,18 +1986,40 @@
           .catch(error => {
             console.error('Error:', error);
             console.log('Error updating book: ' + error.message);
-          });
-      })
+          });   */
+
 
 
       let deleteBtn = card.querySelector('.delete-btn');
       deleteBtn.onclick = () => {
-        const DeleteBook = {
-          id: book.id,
-          Year: book.year
+        let booksData = JSON.parse(localStorage.getItem('books')) || [];
+
+        const searchCriteria = {
+          title: book.title,
+          author: book.author,
+          year: book.year
         };
 
-        fetch(`http://localhost:5296/api/BlogPosts/${book.id}`, {
+        const index = booksData.findIndex(b =>
+          b.title === searchCriteria.title &&
+          b.author === searchCriteria.author &&
+          b.year === searchCriteria.year
+        );
+
+        if (index !== -1) {
+          booksData.splice(index, 1);
+
+          localStorage.setItem('books', JSON.stringify(booksData));
+
+          card.remove();
+
+          alert('Book deleted successfully');
+        } else {
+          alert('Book not found in storage');
+        }
+      };
+
+      /*  fetch(`http://localhost:5296/api/BlogPosts/${book.id}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json'
@@ -1953,9 +2038,9 @@
           .catch(error => {
             console.error('Error:', error);
             alert('Error deleting book: ' + error.message);
-          });
-      };
-    }
+          }); */
+    };
+
 
 
     document.getElementById('LoginForm').addEventListener('submit', function (e) {
@@ -1990,41 +2075,65 @@
     });
 
 
+
+
     function getBooks() {
-      fetch('http://localhost:5296/api/auth')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to fetch books: ' + response.status);
-          }
-          return response.json();
-        })
-        .then(books => {
-          if (books.find(u => u.username === JSON.parse(localStorage.getItem("user")).Username)) {
-            document.getElementById('addBookBtn').disabled = false;
+      const users = JSON.parse(localStorage.getItem('user')) || [];
 
-            fetch('http://localhost:5296/api/blogposts/')
-              .then(response => {
-                if (!response.ok) {
-                  throw new Error('Failed to fetch books: ' + response.status);
-                }
-                return response.json();
-              })
-              .then(books => {
-                bookCardsContainer.innerHTML = '';
-                books.forEach(book => createAndAddBookCard(book));
-                New_book();
+      if (users.length !== 0) {
+        document.getElementById('addBookBtn').disabled = false;
+        bookCardsContainer.innerHTML = '';
+        /* const jsonData = document.getElementById('jsonData').textContent;
+       const booksArray = JSON.parse(jsonData); */
 
-              })
-              .catch(error => {
-                console.error('Error fetching books:', error);
-              });
+        let data = JSON.parse(localStorage.getItem('books'))
+        if (data) {
+          data.forEach(book => {
+            console.log('Title:', book.title);
+            console.log('Author:', book.author);
+            createAndAddBookCard(book);
+            New_book();
+          })
+        }
+      }
+      else {
+        document.getElementById('addBookBtn').disabled = true;
+      }
 
-          } else {
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching books:', error);
-        });
+      /*  fetch('http://localhost:5296/api/auth')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to fetch books: ' + response.status);
+            }
+            return response.json();
+          })
+          .then(books => {
+            if (books.find(u => u.username === JSON.parse(localStorage.getItem("user")).Username)) {
+              document.getElementById('addBookBtn').disabled = false;
+  
+              fetch('http://localhost:5296/api/blogposts/')
+                .then(response => {
+                  if (!response.ok) {
+                    throw new Error('Failed to fetch books: ' + response.status);
+                  }
+                  return response.json();
+                })
+                .then(books => {
+                  bookCardsContainer.innerHTML = '';
+                  books.forEach(book => createAndAddBookCard(book));
+                  New_book();
+  
+                })
+                .catch(error => {
+                  console.error('Error fetching books:', error);
+                });
+  
+            } else {
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching books:', error);
+          }); */
     }
 
 
@@ -2038,12 +2147,12 @@
         });
       }
 
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (user !== null && user.data.token !== "") {
-        toggleLoginLogout(true);
-      } else {
-        toggleLoginLogout(false);
-      }
+      /* const user = JSON.parse(localStorage.getItem('user'));
+       if (user !== null && user.data.token !== "") {
+         toggleLoginLogout(true);
+       } else {
+         toggleLoginLogout(false);
+       } */
 
     });
 

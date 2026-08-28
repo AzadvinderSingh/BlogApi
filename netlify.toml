@@ -1,0 +1,5 @@
+[build]
+  # Build command using the correct Angular CLI configuration flag
+  command = "ng build --configuration production"
+  # Directory to publish
+  publish = "dist/bookstore/browser"
