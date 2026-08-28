@@ -8,7 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Locate the Angular build output relative to the app's content root
 // (the project directory when running via 'dotnet run', or the published
-// app folder when deployed) — this is where UseWebRoot expects a path.
 var browserPath = Path.Combine(builder.Environment.ContentRootPath, "dist", "bookstore", "browser");
 
 if (Directory.Exists(browserPath))
