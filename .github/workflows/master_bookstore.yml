@@ -5,53 +5,12 @@ on:
     branches:
       - master
   workflow_dispatch:
-  
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: .net-app
-
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: 3f649468-79f9-4081-ac82-14128bcf6841
-          tenant-id: 4e253ebb-6f2d-47fe-ba79-3e191596cff0
-          subscription-id: 93a5a51f-2b5f-4cf5-a887-01d39fc1423a
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'BookStore'
-          slot-name: 'Production'
-          package: "${{ github.workspace }}\\myapp"
-
-
-
-
-          name: Build and deploy ASP.Net Core app to Azure Web App - BlogApi
-
-on:
-  push:
-    branches:
-      - master
-  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
     env:
-      PUBLISH_DIR: "${{ github.workspace }}\\myapp"  # Output directory
+      DOTNET_ROOT: "${{ github.workspace }}\\myapp"  # Output directory
     permissions:
       contents: read
     steps:
@@ -66,13 +25,13 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: Publish the app
-        run: dotnet publish ./BlogApi/BlogApi.csproj -c Release -o "${{ env.PUBLISH_DIR }}"
+        run: dotnet publish ./BlogApi/BlogApi.csproj -c Release -o "${{ env.DOTNET_ROOT }}"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: "${{ env.PUBLISH_DIR }}"
+          path: "${{ env.DOTNET_ROOT }}"
 
   deploy:
     runs-on: windows-latest
@@ -88,7 +47,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-          path: "${{ github.workspace }}\\myapp"
 
       - name: Login to Azure
         uses: azure/login@v2
