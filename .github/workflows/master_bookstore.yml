@@ -31,7 +31,7 @@ jobs:
           name: dotnet-app
           path: "${{ github.workspace }}/publish"
 
-deploy:
+  deploy:
     runs-on: windows-latest
     needs: build
     environment:
