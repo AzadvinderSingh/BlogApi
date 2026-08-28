@@ -2,11 +2,33 @@ using BlogApi.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.Extensions.FileProviders;
-using System.IO;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Locate the Angular build output relative to the app's content root
+// (the project directory when running via 'dotnet run', or the published
+// app folder when deployed) — this is where UseWebRoot expects a path.
+var browserPath = Path.Combine(builder.Environment.ContentRootPath, "dist", "bookstore", "browser");
+
+if (Directory.Exists(browserPath))
+{
+    builder.WebHost.UseWebRoot(browserPath);
+}
+else
+{
+    Console.WriteLine($"WARNING: Angular build output not found at {browserPath}. " +
+                       "Run 'ng build' in the Angular project, or update this path. " +
+                       "Falling back to default wwwroot.");
+}
+
+// Configure JWT Authentication
+var jwtKey = builder.Configuration["Jwt:Key"]
+    ?? throw new InvalidOperationException("Jwt:Key is missing from configuration.");
+var jwtIssuer = builder.Configuration["Jwt:Issuer"]
+    ?? throw new InvalidOperationException("Jwt:Issuer is missing from configuration.");
+var jwtAudience = builder.Configuration["Jwt:Audience"]
+    ?? throw new InvalidOperationException("Jwt:Audience is missing from configuration.");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -17,14 +39,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
         };
     });
 
-
+// Configure CORS policy
+// TODO: for production, source the allowed origin(s) from configuration
+// instead of hardcoding localhost, e.g. builder.Configuration["Cors:AllowedOrigins"]
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularDev", policy =>
@@ -33,18 +56,39 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod());
 });
 
-
-
-Console.WriteLine("Connection string: " + builder.Configuration.GetConnectionString("DefaultConnection"));
-
+// Register DbContext
 builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Log connection string only in development, via ILogger rather than Console.WriteLine
+if (builder.Environment.IsDevelopment())
+{
+    var logger = LoggerFactory.Create(b => b.AddConsole()).CreateLogger("Startup");
+    logger.LogInformation("Connection string: {ConnectionString}",
+        builder.Configuration.GetConnectionString("DefaultConnection"));
+}
+
+// Add authorization, controllers, and API explorer
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
+
+// Static files should be served early in the pipeline
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+if (app.Environment.IsDevelopment())
+{
+    // e.g. app.UseDeveloperExceptionPage();
+    // e.g. Swagger/OpenAPI UI here
+}
+else
+{
+    app.UseExceptionHandler("/error");
+    app.UseHsts();
+}
 
 app.UseHttpsRedirection();
 
@@ -55,35 +99,10 @@ app.UseCors("AllowAngularDev");
 app.UseAuthentication();
 app.UseAuthorization();
 
+// API routes (attribute-routed controllers)
 app.MapControllers();
-app.UseDefaultFiles();
-app.UseStaticFiles();
 
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), "dist", "bookstore", "browser")
-    ),
-    RequestPath = ""
-});
-
-
+// SPA fallback — anything not matched by an API route serves index.html
 app.MapFallbackToFile("index.html");
-
-app.MapControllerRoute(
-    name: "api",
-    pattern: "api/{controller}/{action}/{id?}"
-);
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}"
-);
-
-
-if (app.Environment.IsDevelopment())
-{
-    
-}
 
 app.Run();
