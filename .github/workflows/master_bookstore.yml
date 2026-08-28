@@ -5,34 +5,7 @@ on:
     branches:
       - master
   workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: windows-latest
-    env:
-      DOTNET_ROOT: "${{ github.workspace }}\\myapp"  # Output directory
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '9.0.317'
-
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
-
-      - name: Publish the app
-        run: dotnet publish ./BlogApi/BlogApi.csproj -c Release -o ".\myapp"
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: .net-app
-          path: "${{ env.DOTNET_ROOT }}"
-
+  
   deploy:
     runs-on: windows-latest
     needs: build
