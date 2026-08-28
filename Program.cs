@@ -45,7 +45,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Configure CORS policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularDev", policy =>
