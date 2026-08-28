@@ -1,0 +1,2168 @@
+export default `<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dark Mode Full Page</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    body {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --header-bg: #e0e0e0;
+      --sidebar-bg: #343a40;
+      --footer-bg: #f8f9fa;
+    }
+
+    footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    body>footer,
+    .footer_page {
+      position: relative;
+      z-index: 1;
+    }
+
+
+    .blockquote-footer {
+      display: block !important;
+      position: static !important;
+      margin-top: 0.5rem !important;
+      clear: both;
+    }
+
+    .blockquote p {
+      margin-bottom: 0.5rem !important;
+      overflow: visible;
+    }
+
+
+    body.dark-theme {
+      --bg-color: #212529;
+      --text-color: #f8f9fa;
+      --header-bg: #343a40;
+      --sidebar-bg: #212529;
+      --footer-bg: #343a40;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page {
+      margin-left: 58px;
+      ;
+      margin-right: 12px;
+    }
+
+    .navbar-brand {
+      font-weight: 600;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .navbar-brand i {
+      color: var(--bs-primary, #0d6efd);
+    }
+
+    .navbar,
+    footer,
+    #sidebar,
+    #content-area {
+      background-color: var(--header-bg);
+    }
+
+    .btn-sm {
+      min-height: 38px;
+      padding: 0.375rem 0.75rem;
+    }
+
+    @media (min-width: 576px) {
+      .btn-md-normal {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+      }
+    }
+
+    .sans-serif-title {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    #sidebar {
+      min-width: 250px;
+      max-width: 250px;
+      height: 100vh;
+      background-color: var(--sidebar-bg);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1050;
+      transition: transform 0.3s;
+    }
+
+
+    .favorite-card {
+      width: 18rem;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      border: 2px solid #ff4d4d;
+      /* Red accent border */
+      background-color: #fff;
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-left: 4px;
+    }
+
+    .favorite-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .favorite-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+    }
+
+
+    .card-body:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-body {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    #title {
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #e60000;
+      margin: 0 0 10px 0;
+    }
+
+    #author {
+      font-family: Lato, sans-serif;
+      font-size: 0.95rem;
+      color: #555;
+      margin: 0 0 10px 0;
+    }
+
+    #year {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 0.9rem;
+      color: #777;
+      margin: 0;
+    }
+
+    .favorite-star {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 1.5rem;
+      color: #ffcc00;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .favorite-star:hover {
+      color: #ff9900;
+    }
+
+
+    .footer_page {
+      margin-left: 72px;
+    }
+
+    #login_button #register {
+      min-height: 44px;
+    }
+
+
+    .author-font {
+      font-family: 'Lato', sans-serif;
+    }
+
+    #content-area {
+      flex: 1;
+      padding: 20px;
+    }
+
+    .header {
+      background-color: var(--header-bg);
+      padding: 20px;
+      text-align: center;
+      color: var(--text-color);
+      z-index: 1;
+      position: relative;
+    }
+
+    .navbar.sticky-top {
+      z-index: 1020;
+    }
+
+    footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    #theme-toggle {
+      margin-left: auto;
+    }
+
+    @media (max-width: 991.98px) {
+      #sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+      }
+
+      #sidebar.show {
+        transform: translateX(0);
+      }
+
+      div[style*="margin-left:250px"] {
+        margin-left: 0 !important;
+      }
+
+      .btn-sm {
+        min-height: 38px;
+        padding: 0.375rem 0.75rem;
+      }
+
+      @media (min-width: 576px) {
+        .btn-md-normal {
+          padding: 0.5rem 1rem;
+          font-size: 1rem;
+        }
+      }
+
+
+
+      @media (min-width: 992px) {
+        #sidebarToggle {
+          padding: 0.4rem 0.6rem;
+          border-radius: 0.375rem;
+        }
+      }
+    }
+  </style>
+<link rel="stylesheet" href="styles-27GV6IWR.css"></head>
+
+<body><script type="text/javascript" id="ng-event-dispatch-contract">(()=>{function p(t,n,r,o,e,i,f,m){return{eventType:t,event:n,targetElement:r,eic:o,timeStamp:e,eia:i,eirp:f,eiack:m}}function u(t){let n=[],r=e=>{n.push(e)};return{c:t,q:n,et:[],etc:[],d:r,h:e=>{r(p(e.type,e,e.target,t,Date.now()))}}}function s(t,n,r){for(let o=0;o<n.length;o++){let e=n[o];(r?t.etc:t.et).push(e),t.c.addEventListener(e,t.h,r)}}function c(t,n,r,o,e=window){let i=u(t);e._ejsas||(e._ejsas={}),e._ejsas[n]=i,s(i,r),s(i,o,!0)}window.__jsaction_bootstrap=c;})();
+</script>
+  <div style="display:flex; flex-direction:row; min-height:100vh;">
+    <nav id="sidebar" class="d-flex flex-column p-3 position-fixed">
+      <h4 class="text-white mb-4"><i class="fas fa-quote-left"></i>
+        QuotesApp</h4>
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+          <a href="#home" class="nav-link active" onclick="showPage('home'); return false;"> <i class="fas fa-home"></i>
+            Home</a>
+        </li>
+        <li>
+          <a href="#quotes" class="nav-link" onclick="showPage('quotes'); return false;"> <i class="fas fa-quote-right"></i> My Quotes</a>
+        </li>
+        <li>
+          <a href="#books" class="nav-link" onclick="showPage('books'); return false;"> <i class="fas fa-book"></i>
+            Books</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div style="flex:1; display:flex; flex-direction:column; margin-left:250px;">
+      <nav class="navbar navbar-light bg-light px-3 d-flex align-items-center sticky-top pt-3 ">
+        <div class="container">
+
+          <div class="col-sm">
+          </div>
+
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <button class="btn btn-outline-secondary d-lg-none" id="sidebarToggle" type="button" aria-label="Toggle menu">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <a class="navbar-brand mb-0" href="#">
+            <i class="fas fa-quote-left"></i> Books
+          </a>
+        </div>
+
+        <div class="row justify-content-end">
+          <div class="col-auto">
+            <button id="theme-toggle" class="btn btn-outline-secondary" aria-label="Switch theme">
+              <i class="fas fa-moon" id="theme-icon">Dark</i>
+            </button>
+          </div>
+          <div class="col-auto">
+            <button id="Login" class="btn btn-outline-secondary" aria-label="Switch theme">
+
+              <i class="fas fa-moon" id="theme-icon">Login</i>
+
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <div class="header">
+        <h1><i class="fas fa-quote-left pt-4"></i> Welcome to Bookstore</h1>
+      </div>
+
+      <div id="content-area" class="flex-fill p-3">
+        <div id="home" class="page">
+          <h2>Welcome!</h2>
+          <p>This is a simple quotes & bookstore app where you can add your
+            favorite quotes and manage your books.</p>
+          <div class="card favorite-card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkLBB9QfyTHUdKm6uJLKtcrfbFz9Fp4kFtYpQy5ZUaLA&amp;s=10" alt="Book Cover"/>
+            <div class="card-body" id="book_data">
+              <div class="favorite-star" title="Favorite">&#9733;</div>
+              <h5 id="title">Book Title</h5>
+              <h6 id="author">Author Name</h6>
+              <p id="year">Published in 2023</p>
+            </div>
+          </div>
+
+        </div>
+        <div id="quotes" class="page" style="display:none;">
+          <h2>My Quotes</h2>
+          <div class="row">
+            <div class="col">
+              <ul class="list-group">
+                <li class="list-group-item mb-2 p-1">
+                  <blockquote class="blockquote text-center">
+                    <p class="mb-0 fst-italic">Be yourself; everyone else is
+                      already taken.</p>
+                    <footer class="blockquote-footer"><cite title="Source Title" class="fw-bold text-dark">Oscar
+                        Wilde</cite></footer>
+                  </blockquote>
+                </li>
+                <li class=" list-group-item mb-2 p-1">
+                  <blockquote class="blockquote text-center">
+                    <p class="mb-0 fst-italic">Whether you think you can or
+                      think you
+                      can't, you're right."</p>
+                    <footer class="blockquote-footer"><cite title="Source Title" class="fw-bold text-dark">Henry
+                        Ford</cite></footer>
+                  </blockquote>
+                </li>
+                <li class=" list-group-item mb-2 p-1">
+                  <blockquote class="blockquote text-center">
+                    <p class="mb-0 fst-italic">Keep going.</p>
+                    <footer class="blockquote-footer"><cite title="Source Title" class="fw-bold text-dark">Winston
+                        Churchill</cite></footer>
+                  </blockquote>
+                </li>
+                <li class=" list-group-item mb-2 p-1">
+                  <blockquote class="blockquote text-center">
+                    <p class="mb-0 fst-italic">If you're offered a seat on a
+                      rocket ship, don't ask what seat! Just get on. </p>
+                    <footer class="blockquote-footer"><cite title="Source Title" class="fw-bold text-dark">Sheryl
+                        Sandberg</cite></footer>
+                  </blockquote>
+                </li>
+                <li class=" list-group-item p-1">
+                  <blockquote class="blockquote text-center">
+                    <p class="mb-0 fst-italic">When I let go of what I
+                      am, I become what I might be</p>
+                    <footer class="blockquote-footer"><cite title="Source Title" class="fw-bold text-dark">Lao
+                        Tzu</cite></footer>
+                  </blockquote>
+                </li>
+
+                <div id="quotesList" class="list-group mt-2 ">
+                </div>
+              </ul>
+            </div>
+            <form id="quoteForm" class="mb-4 col">
+              <div class="mb-3">
+                <label for="quoteText" class="form-label">Quote</label>
+                <textarea class="form-control" id="quoteText" rows="3" required=""></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="quoteAuthor" class="form-label">Author</label>
+                <input type="text" class="form-control" id="quoteAuthor" required=""/>
+              </div>
+              <button type="submit" class="btn btn-primary w-100 d-block">
+                <i class="fas fa-plus"></i> Add Quote
+              </button>
+            </form>
+
+          </div>
+
+        </div>
+        <div id="books" class="page" style="display:none;">
+          <h2>My Books</h2>
+          <button class="btn btn-success mb-3" id="addBookBtn" disabled="">
+            <i class="fas fa-plus"></i> Add New Book
+          </button>
+          <div id="bookCardsContainer" class="d-flex flex-wrap gap-3"></div>
+        </div>
+      </div>
+      <footer>
+        <p class="footer_page pt-2 pb-2">&copy; 2024 Quotes & Bookstore. All
+          rights reserved.</p>
+      </footer>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addBookModalLabel">Add New Book</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addBookForm">
+            <div class="mb-3">
+              <label for="bookTitle" class="form-label">Title</label>
+              <input type="text" class="form-control" id="bookTitle" required="">
+            </div>
+            <div class="mb-3">
+              <label for="bookAuthor" class="form-label">Author</label>
+              <input type="text" class="form-control" id="bookAuthor" required="">
+            </div>
+            <div class="mb-3">
+              <label for="pubDate" class="form-label">Publication Year</label>
+              <input type="number" class="form-control" id="pubDate" required="">
+            </div>
+            <button type="submit" class="btn btn-primary">Add Book</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="editBookModal" tabindex="-1" aria-labelledby="editBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editBookModalLabel">AddBook</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="EditBookForm">
+            <div class="mb-3">
+              <label for="editbookTitle" class="form-label">Title</label>
+              <input type="text" class="form-control" id="editbookTitle" required="">
+            </div>
+            <div class="mb-3">
+              <label for="editBookAuthor" class="form-label">Author</label>
+              <input type="text" class="form-control" id="editBookAuthor" required="">
+            </div>
+            <div class="mb-3">
+              <label for="year" class="form-label">Publication Year</label>
+              <input type="number" class="form-control" id="publish_year" required="">
+            </div>
+            <button type="submit" class="btn btn-primary">Edit Book</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade p-5" id="LoginModal" tabindex="-1" aria-labelledby="LoginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="LoginLabel"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" id="close-button" aria-label="Close"></button>
+        </div>
+        <div class="alert alert-success d-none" id="alert_button" role="alert">
+          <h4 class="alert-heading">Well done!</h4>
+          <p>Invalid username and password</p>
+          <hr>
+          <p class="mb-0">register first</p>
+        </div>
+        <div class="modal-body">
+          <form id="LoginForm">
+            <div class="mb-3">
+              <label for="Username" class="form-label">Username</label>
+              <input type="text" class="form-control" id="Username" required="">
+            </div>
+            <div class="mb-3">
+              <label for="Password" class="form-label">Password</label>
+              <input type="number" class="form-control" id="Password" required="">
+            </div>
+            <div id="inputAlert" class="alert alert-warning d-none" role="alert">
+              Please fill in both Username and Password.
+            </div>
+            <div class="mb-3 container">
+              <div class="row justify-content-center">
+                <div class="col-10 col-sm-8 col-md-6">
+                  <button type="button" class="btn btn-primary btn-lg w-100" id="register">Register</button>
+                </div>
+              </div>
+            </div>
+
+          </form>
+        </div>
+        <div class="mb-3 container">
+          <div class="row justify-content-center">
+            <div class="col-10 col-sm-8 col-md-6">
+              <button type="button" class="btn btn-primary btn-lg w-100" id="login_button">Login</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="application/json" id="jsonData">
+[
+  {
+    "author": "Chinua Achebe",
+    "country": "Nigeria",
+    "imageLink": "images/things-fall-apart.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Things_Fall_Apart\\n",
+    "pages": 209,
+    "title": "Things Fall Apart",
+    "year": 1958
+  },
+  {
+    "author": "Hans Christian Andersen",
+    "country": "Denmark",
+    "imageLink": "images/fairy-tales.jpg",
+    "language": "Danish",
+    "link": "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.\\n",
+    "pages": 784,
+    "title": "Fairy tales",
+    "year": 1836
+  },
+  {
+    "author": "Dante Alighieri",
+    "country": "Italy",
+    "imageLink": "images/the-divine-comedy.jpg",
+    "language": "Italian",
+    "link": "https://en.wikipedia.org/wiki/Divine_Comedy\\n",
+    "pages": 928,
+    "title": "The Divine Comedy",
+    "year": 1315
+  },
+  {
+    "author": "Unknown",
+    "country": "Sumer and Akkadian Empire",
+    "imageLink": "images/the-epic-of-gilgamesh.jpg",
+    "language": "Akkadian",
+    "link": "https://en.wikipedia.org/wiki/Epic_of_Gilgamesh\\n",
+    "pages": 160,
+    "title": "The Epic Of Gilgamesh",
+    "year": -1700
+  },
+  {
+    "author": "Unknown",
+    "country": "Achaemenid Empire",
+    "imageLink": "images/the-book-of-job.jpg",
+    "language": "Hebrew",
+    "link": "https://en.wikipedia.org/wiki/Book_of_Job\\n",
+    "pages": 176,
+    "title": "The Book Of Job",
+    "year": -600
+  },
+  {
+    "author": "Unknown",
+    "country": "India/Iran/Iraq/Egypt/Tajikistan",
+    "imageLink": "images/one-thousand-and-one-nights.jpg",
+    "language": "Arabic",
+    "link": "https://en.wikipedia.org/wiki/One_Thousand_and_One_Nights\\n",
+    "pages": 288,
+    "title": "One Thousand and One Nights",
+    "year": 1200
+  },
+  {
+    "author": "Unknown",
+    "country": "Iceland",
+    "imageLink": "images/njals-saga.jpg",
+    "language": "Old Norse",
+    "link": "https://en.wikipedia.org/wiki/Nj%C3%A1ls_saga\\n",
+    "pages": 384,
+    "title": "Nj\\u00e1l's Saga",
+    "year": 1350
+  },
+  {
+    "author": "Jane Austen",
+    "country": "United Kingdom",
+    "imageLink": "images/pride-and-prejudice.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Pride_and_Prejudice\\n",
+    "pages": 226,
+    "title": "Pride and Prejudice",
+    "year": 1813
+  },
+  {
+    "author": "Honor\\u00e9 de Balzac",
+    "country": "France",
+    "imageLink": "images/le-pere-goriot.jpg",
+    "language": "French",
+    "link": "https://en.wikipedia.org/wiki/Le_P%C3%A8re_Goriot\\n",
+    "pages": 443,
+    "title": "Le P\\u00e8re Goriot",
+    "year": 1835
+  },
+  {
+    "author": "Samuel Beckett",
+    "country": "Republic of Ireland",
+    "imageLink": "images/molloy-malone-dies-the-unnamable.jpg",
+    "language": "French, English",
+    "link": "https://en.wikipedia.org/wiki/Molloy_(novel)\\n",
+    "pages": 256,
+    "title": "Molloy, Malone Dies, The Unnamable, the trilogy",
+    "year": 1952
+  },
+  {
+    "author": "Giovanni Boccaccio",
+    "country": "Italy",
+    "imageLink": "images/the-decameron.jpg",
+    "language": "Italian",
+    "link": "https://en.wikipedia.org/wiki/The_Decameron\\n",
+    "pages": 1024,
+    "title": "The Decameron",
+    "year": 1351
+  },
+  {
+    "author": "Jorge Luis Borges",
+    "country": "Argentina",
+    "imageLink": "images/ficciones.jpg",
+    "language": "Spanish",
+    "link": "https://en.wikipedia.org/wiki/Ficciones\\n",
+    "pages": 224,
+    "title": "Ficciones",
+    "year": 1965
+  },
+  {
+    "author": "Emily Bront\\u00eb",
+    "country": "United Kingdom",
+    "imageLink": "images/wuthering-heights.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Wuthering_Heights\\n",
+    "pages": 342,
+    "title": "Wuthering Heights",
+    "year": 1847
+  },
+  {
+    "author": "Albert Camus",
+    "country": "Algeria, French Empire",
+    "imageLink": "images/l-etranger.jpg",
+    "language": "French",
+    "link": "https://en.wikipedia.org/wiki/The_Stranger_(novel)\\n",
+    "pages": 185,
+    "title": "The Stranger",
+    "year": 1942
+  },
+  {
+    "author": "Paul Celan",
+    "country": "Romania, France",
+    "imageLink": "images/poems-paul-celan.jpg",
+    "language": "German",
+    "link": "\\n",
+    "pages": 320,
+    "title": "Poems",
+    "year": 1952
+  },
+  {
+    "author": "Louis-Ferdinand C\\u00e9line",
+    "country": "France",
+    "imageLink": "images/voyage-au-bout-de-la-nuit.jpg",
+    "language": "French",
+    "link": "https://en.wikipedia.org/wiki/Journey_to_the_End_of_the_Night\\n",
+    "pages": 505,
+    "title": "Journey to the End of the Night",
+    "year": 1932
+  },
+  {
+    "author": "Miguel de Cervantes",
+    "country": "Spain",
+    "imageLink": "images/don-quijote-de-la-mancha.jpg",
+    "language": "Spanish",
+    "link": "https://en.wikipedia.org/wiki/Don_Quixote\\n",
+    "pages": 1056,
+    "title": "Don Quijote De La Mancha",
+    "year": 1610
+  },
+  {
+    "author": "Geoffrey Chaucer",
+    "country": "England",
+    "imageLink": "images/the-canterbury-tales.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/The_Canterbury_Tales\\n",
+    "pages": 544,
+    "title": "The Canterbury Tales",
+    "year": 1450
+  },
+  {
+    "author": "Anton Chekhov",
+    "country": "Russia",
+    "imageLink": "images/stories-of-anton-chekhov.jpg",
+    "language": "Russian",
+    "link": "https://en.wikipedia.org/wiki/List_of_short_stories_by_Anton_Chekhov\\n",
+    "pages": 194,
+    "title": "Stories",
+    "year": 1886
+  },
+  {
+    "author": "Joseph Conrad",
+    "country": "United Kingdom",
+    "imageLink": "images/nostromo.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Nostromo\\n",
+    "pages": 320,
+    "title": "Nostromo",
+    "year": 1904
+  },
+  {
+    "author": "Charles Dickens",
+    "country": "United Kingdom",
+    "imageLink": "images/great-expectations.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Great_Expectations\\n",
+    "pages": 194,
+    "title": "Great Expectations",
+    "year": 1861
+  },
+  {
+    "author": "Denis Diderot",
+    "country": "France",
+    "imageLink": "images/jacques-the-fatalist.jpg",
+    "language": "French",
+    "link": "https://en.wikipedia.org/wiki/Jacques_the_Fatalist\\n",
+    "pages": 596,
+    "title": "Jacques the Fatalist",
+    "year": 1796
+  },
+  {
+    "author": "Alfred D\\u00f6blin",
+    "country": "Germany",
+    "imageLink": "images/berlin-alexanderplatz.jpg",
+    "language": "German",
+    "link": "https://en.wikipedia.org/wiki/Berlin_Alexanderplatz\\n",
+    "pages": 600,
+    "title": "Berlin Alexanderplatz",
+    "year": 1929
+  },
+  {
+    "author": "Fyodor Dostoevsky",
+    "country": "Russia",
+    "imageLink": "images/crime-and-punishment.jpg",
+    "language": "Russian",
+    "link": "https://en.wikipedia.org/wiki/Crime_and_Punishment\\n",
+    "pages": 551,
+    "title": "Crime and Punishment",
+    "year": 1866
+  },
+  {
+    "author": "Fyodor Dostoevsky",
+    "country": "Russia",
+    "imageLink": "images/the-idiot.jpg",
+    "language": "Russian",
+    "link": "https://en.wikipedia.org/wiki/The_Idiot\\n",
+    "pages": 656,
+    "title": "The Idiot",
+    "year": 1869
+  },
+  {
+    "author": "Fyodor Dostoevsky",
+    "country": "Russia",
+    "imageLink": "images/the-possessed.jpg",
+    "language": "Russian",
+    "link": "https://en.wikipedia.org/wiki/Demons_(Dostoyevsky_novel)\\n",
+    "pages": 768,
+    "title": "The Possessed",
+    "year": 1872
+  },
+  {
+    "author": "Fyodor Dostoevsky",
+    "country": "Russia",
+    "imageLink": "images/the-brothers-karamazov.jpg",
+    "language": "Russian",
+    "link": "https://en.wikipedia.org/wiki/The_Brothers_Karamazov\\n",
+    "pages": 824,
+    "title": "The Brothers Karamazov",
+    "year": 1880
+  },
+  {
+    "author": "George Eliot",
+    "country": "United Kingdom",
+    "imageLink": "images/middlemarch.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Middlemarch\\n",
+    "pages": 800,
+    "title": "Middlemarch",
+    "year": 1871
+  },
+  {
+    "author": "Ralph Ellison",
+    "country": "United States",
+    "imageLink": "images/invisible-man.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Invisible_Man\\n",
+    "pages": 581,
+    "title": "Invisible Man",
+    "year": 1952
+  },
+  {
+    "author": "Euripides",
+    "country": "Greece",
+    "imageLink": "images/medea.jpg",
+    "language": "Greek",
+    "link": "https://en.wikipedia.org/wiki/Medea_(play)\\n",
+    "pages": 104,
+    "title": "Medea",
+    "year": -431
+  },
+  {
+    "author": "William Faulkner",
+    "country": "United States",
+    "imageLink": "images/absalom-absalom.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Absalom,_Absalom!\\n",
+    "pages": 313,
+    "title": "Absalom, Absalom!",
+    "year": 1936
+  },
+  {
+    "author": "William Faulkner",
+    "country": "United States",
+    "imageLink": "images/the-sound-and-the-fury.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/The_Sound_and_the_Fury\\n",
+    "pages": 326,
+    "title": "The Sound and the Fury",
+    "year": 1929
+  },
+  {
+    "author": "Gustave Flaubert",
+    "country": "France",
+    "imageLink": "images/madame-bovary.jpg",
+    "language": "French",
+    "link": "https://en.wikipedia.org/wiki/Madame_Bovary\\n",
+    "pages": 528,
+    "title": "Madame Bovary",
+    "year": 1857
+  },
+  {
+    "author": "Gustave Flaubert",
+    "country": "France",
+    "imageLink": "images/l-education-sentimentale.jpg",
+    "language": "French",
+    "link": "https://en.wikipedia.org/wiki/Sentimental_Education\\n",
+    "pages": 606,
+    "title": "Sentimental Education",
+    "year": 1869
+  },
+  {
+    "author": "Federico Garc\\u00eda Lorca",
+    "country": "Spain",
+    "imageLink": "images/gypsy-ballads.jpg",
+    "language": "Spanish",
+    "link": "https://en.wikipedia.org/wiki/Gypsy_Ballads\\n",
+    "pages": 218,
+    "title": "Gypsy Ballads",
+    "year": 1928
+  },
+  {
+    "author": "Gabriel Garc\\u00eda M\\u00e1rquez",
+    "country": "Colombia",
+    "imageLink": "images/one-hundred-years-of-solitude.jpg",
+    "language": "Spanish",
+    "link": "https://en.wikipedia.org/wiki/One_Hundred_Years_of_Solitude\\n",
+    "pages": 417,
+    "title": "One Hundred Years of Solitude",
+    "year": 1967
+  },
+  {
+    "author": "Gabriel Garc\\u00eda M\\u00e1rquez",
+    "country": "Colombia",
+    "imageLink": "images/love-in-the-time-of-cholera.jpg",
+    "language": "Spanish",
+    "link": "https://en.wikipedia.org/wiki/Love_in_the_Time_of_Cholera\\n",
+    "pages": 368,
+    "title": "Love in the Time of Cholera",
+    "year": 1985
+  },
+  {
+    "author": "Johann Wolfgang von Goethe",
+    "country": "Saxe-Weimar",
+    "imageLink": "images/faust.jpg",
+    "language": "German",
+    "link": "https://en.wikipedia.org/wiki/Goethe%27s_Faust\\n",
+    "pages": 158,
+    "title": "Faust",
+    "year": 1832
+  },
+  {
+    "author": "Nikolai Gogol",
+    "country": "Russia",
+    "imageLink": "images/dead-souls.jpg",
+    "language": "Russian",
+    "link": "https://en.wikipedia.org/wiki/Dead_Souls\\n",
+    "pages": 432,
+    "title": "Dead Souls",
+    "year": 1842
+  },
+  {
+    "author": "G\\u00fcnter Grass",
+    "country": "Germany",
+    "imageLink": "images/the-tin-drum.jpg",
+    "language": "German",
+    "link": "https://en.wikipedia.org/wiki/The_Tin_Drum\\n",
+    "pages": 600,
+    "title": "The Tin Drum",
+    "year": 1959
+  },
+  {
+    "author": "Jo\\u00e3o Guimar\\u00e3es Rosa",
+    "country": "Brazil",
+    "imageLink": "images/the-devil-to-pay-in-the-backlands.jpg",
+    "language": "Portuguese",
+    "link": "https://en.wikipedia.org/wiki/The_Devil_to_Pay_in_the_Backlands\\n",
+    "pages": 494,
+    "title": "The Devil to Pay in the Backlands",
+    "year": 1956
+  },
+  {
+    "author": "Knut Hamsun",
+    "country": "Norway",
+    "imageLink": "images/hunger.jpg",
+    "language": "Norwegian",
+    "link": "https://en.wikipedia.org/wiki/Hunger_(Hamsun_novel)\\n",
+    "pages": 176,
+    "title": "Hunger",
+    "year": 1890
+  },
+  {
+    "author": "Ernest Hemingway",
+    "country": "United States",
+    "imageLink": "images/the-old-man-and-the-sea.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/The_Old_Man_and_the_Sea\\n",
+    "pages": 128,
+    "title": "The Old Man and the Sea",
+    "year": 1952
+  },
+  {
+    "author": "Homer",
+    "country": "Greece",
+    "imageLink": "images/the-iliad-of-homer.jpg",
+    "language": "Greek",
+    "link": "https://en.wikipedia.org/wiki/Iliad\\n",
+    "pages": 608,
+    "title": "Iliad",
+    "year": -735
+  },
+  {
+    "author": "Homer",
+    "country": "Greece",
+    "imageLink": "images/the-odyssey-of-homer.jpg",
+    "language": "Greek",
+    "link": "https://en.wikipedia.org/wiki/Odyssey\\n",
+    "pages": 374,
+    "title": "Odyssey",
+    "year": -800
+  },
+  {
+    "author": "Henrik Ibsen",
+    "country": "Norway",
+    "imageLink": "images/a-Dolls-house.jpg",
+    "language": "Norwegian",
+    "link": "https://en.wikipedia.org/wiki/A_Doll%27s_House\\n",
+    "pages": 68,
+    "title": "A Doll's House",
+    "year": 1879
+  },
+  {
+    "author": "James Joyce",
+    "country": "Irish Free State",
+    "imageLink": "images/ulysses.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Ulysses_(novel)\\n",
+    "pages": 228,
+    "title": "Ulysses",
+    "year": 1922
+  },
+  {
+    "author": "Franz Kafka",
+    "country": "Czechoslovakia",
+    "imageLink": "images/stories-of-franz-kafka.jpg",
+    "language": "German",
+    "link": "https://en.wikipedia.org/wiki/Franz_Kafka_bibliography#Short_stories\\n",
+    "pages": 488,
+    "title": "Stories",
+    "year": 1924
+  },
+  {
+    "author": "Franz Kafka",
+    "country": "Czechoslovakia",
+    "imageLink": "images/the-trial.jpg",
+    "language": "German",
+    "link": "https://en.wikipedia.org/wiki/The_Trial\\n",
+    "pages": 160,
+    "title": "The Trial",
+    "year": 1925
+  },
+  {
+    "author": "Franz Kafka",
+    "country": "Czechoslovakia",
+    "imageLink": "images/the-castle.jpg",
+    "language": "German",
+    "link": "https://en.wikipedia.org/wiki/The_Castle_(novel)\\n",
+    "pages": 352,
+    "title": "The Castle",
+    "year": 1926
+  },
+  {
+    "author": "K\\u0101lid\\u0101sa",
+    "country": "India",
+    "imageLink": "images/the-recognition-of-shakuntala.jpg",
+    "language": "Sanskrit",
+    "link": "https://en.wikipedia.org/wiki/Abhij%C3%B1%C4%81na%C5%9B%C4%81kuntalam\\n",
+    "pages": 147,
+    "title": "The recognition of Shakuntala",
+    "year": 150
+  },
+  {
+    "author": "Yasunari Kawabata",
+    "country": "Japan",
+    "imageLink": "images/the-sound-of-the-mountain.jpg",
+    "language": "Japanese",
+    "link": "https://en.wikipedia.org/wiki/The_Sound_of_the_Mountain\\n",
+    "pages": 288,
+    "title": "The Sound of the Mountain",
+    "year": 1954
+  },
+  {
+    "author": "Nikos Kazantzakis",
+    "country": "Greece",
+    "imageLink": "images/zorba-the-greek.jpg",
+    "language": "Greek",
+    "link": "https://en.wikipedia.org/wiki/Zorba_the_Greek\\n",
+    "pages": 368,
+    "title": "Zorba the Greek",
+    "year": 1946
+  },
+  {
+    "author": "D. H. Lawrence",
+    "country": "United Kingdom",
+    "imageLink": "images/sons-and-lovers.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Sons_and_Lovers\\n",
+    "pages": 432,
+    "title": "Sons and Lovers",
+    "year": 1913
+  },
+  {
+    "author": "Halld\\u00f3r Laxness",
+    "country": "Iceland",
+    "imageLink": "images/independent-people.jpg",
+    "language": "Icelandic",
+    "link": "https://en.wikipedia.org/wiki/Independent_People\\n",
+    "pages": 470,
+    "title": "Independent People",
+    "year": 1934
+  },
+  {
+    "author": "Giacomo Leopardi",
+    "country": "Italy",
+    "imageLink": "images/poems-giacomo-leopardi.jpg",
+    "language": "Italian",
+    "link": "\\n",
+    "pages": 184,
+    "title": "Poems",
+    "year": 1818
+  },
+  {
+    "author": "Doris Lessing",
+    "country": "United Kingdom",
+    "imageLink": "images/the-golden-notebook.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/The_Golden_Notebook\\n",
+    "pages": 688,
+    "title": "The Golden Notebook",
+    "year": 1962
+  },
+  {
+    "author": "Astrid Lindgren",
+    "country": "Sweden",
+    "imageLink": "images/pippi-longstocking.jpg",
+    "language": "Swedish",
+    "link": "https://en.wikipedia.org/wiki/Pippi_Longstocking\\n",
+    "pages": 160,
+    "title": "Pippi Longstocking",
+    "year": 1945
+  },
+  {
+    "author": "Lu Xun",
+    "country": "China",
+    "imageLink": "images/diary-of-a-madman.jpg",
+    "language": "Chinese",
+    "link": "https://en.wikipedia.org/wiki/A_Madman%27s_Diary\\n",
+    "pages": 389,
+    "title": "Diary of a Madman",
+    "year": 1918
+  },
+  {
+    "author": "Naguib Mahfouz",
+    "country": "Egypt",
+    "imageLink": "images/children-of-gebelawi.jpg",
+    "language": "Arabic",
+    "link": "https://en.wikipedia.org/wiki/Children_of_Gebelawi\\n",
+    "pages": 355,
+    "title": "Children of Gebelawi",
+    "year": 1959
+  },
+  {
+    "author": "Thomas Mann",
+    "country": "Germany",
+    "imageLink": "images/buddenbrooks.jpg",
+    "language": "German",
+    "link": "https://en.wikipedia.org/wiki/Buddenbrooks\\n",
+    "pages": 736,
+    "title": "Buddenbrooks",
+    "year": 1901
+  },
+  {
+    "author": "Thomas Mann",
+    "country": "Germany",
+    "imageLink": "images/the-magic-mountain.jpg",
+    "language": "German",
+    "link": "https://en.wikipedia.org/wiki/The_Magic_Mountain\\n",
+    "pages": 720,
+    "title": "The Magic Mountain",
+    "year": 1924
+  },
+  {
+    "author": "Herman Melville",
+    "country": "United States",
+    "imageLink": "images/moby-dick.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Moby-Dick\\n",
+    "pages": 378,
+    "title": "Moby Dick",
+    "year": 1851
+  },
+  {
+    "author": "Michel de Montaigne",
+    "country": "France",
+    "imageLink": "images/essais.jpg",
+    "language": "French",
+    "link": "https://en.wikipedia.org/wiki/Essays_(Montaigne)\\n",
+    "pages": 404,
+    "title": "Essays",
+    "year": 1595
+  },
+  {
+    "author": "Elsa Morante",
+    "country": "Italy",
+    "imageLink": "images/history.jpg",
+    "language": "Italian",
+    "link": "https://en.wikipedia.org/wiki/History_(novel)\\n",
+    "pages": 600,
+    "title": "History",
+    "year": 1974
+  },
+  {
+    "author": "Toni Morrison",
+    "country": "United States",
+    "imageLink": "images/beloved.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Beloved_(novel)\\n",
+    "pages": 321,
+    "title": "Beloved",
+    "year": 1987
+  },
+  {
+    "author": "Murasaki Shikibu",
+    "country": "Japan",
+    "imageLink": "images/the-tale-of-genji.jpg",
+    "language": "Japanese",
+    "link": "https://en.wikipedia.org/wiki/The_Tale_of_Genji\\n",
+    "pages": 1360,
+    "title": "The Tale of Genji",
+    "year": 1006
+  },
+  {
+    "author": "Robert Musil",
+    "country": "Austria",
+    "imageLink": "images/the-man-without-qualities.jpg",
+    "language": "German",
+    "link": "https://en.wikipedia.org/wiki/The_Man_Without_Qualities\\n",
+    "pages": 365,
+    "title": "The Man Without Qualities",
+    "year": 1931
+  },
+  {
+    "author": "Vladimir Nabokov",
+    "country": "Russia/United States",
+    "imageLink": "images/lolita.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Lolita\\n",
+    "pages": 317,
+    "title": "Lolita",
+    "year": 1955
+  },
+  {
+    "author": "George Orwell",
+    "country": "United Kingdom",
+    "imageLink": "images/nineteen-eighty-four.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Nineteen_Eighty-Four\\n",
+    "pages": 272,
+    "title": "Nineteen Eighty-Four",
+    "year": 1949
+  },
+  {
+    "author": "Ovid",
+    "country": "Roman Empire",
+    "imageLink": "images/the-metamorphoses-of-ovid.jpg",
+    "language": "Classical Latin",
+    "link": "https://en.wikipedia.org/wiki/Metamorphoses\\n",
+    "pages": 576,
+    "title": "Metamorphoses",
+    "year": 100
+  },
+  {
+    "author": "Fernando Pessoa",
+    "country": "Portugal",
+    "imageLink": "images/the-book-of-disquiet.jpg",
+    "language": "Portuguese",
+    "link": "https://en.wikipedia.org/wiki/The_Book_of_Disquiet\\n",
+    "pages": 272,
+    "title": "The Book of Disquiet",
+    "year": 1928
+  },
+  {
+    "author": "Edgar Allan Poe",
+    "country": "United States",
+    "imageLink": "images/tales-and-poems-of-edgar-allan-poe.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Edgar_Allan_Poe_bibliography#Tales\\n",
+    "pages": 842,
+    "title": "Tales",
+    "year": 1950
+  },
+  {
+    "author": "Marcel Proust",
+    "country": "France",
+    "imageLink": "images/a-la-recherche-du-temps-perdu.jpg",
+    "language": "French",
+    "link": "https://en.wikipedia.org/wiki/In_Search_of_Lost_Time\\n",
+    "pages": 2408,
+    "title": "In Search of Lost Time",
+    "year": 1920
+  },
+  {
+    "author": "Fran\\u00e7ois Rabelais",
+    "country": "France",
+    "imageLink": "images/gargantua-and-pantagruel.jpg",
+    "language": "French",
+    "link": "https://en.wikipedia.org/wiki/Gargantua_and_Pantagruel\\n",
+    "pages": 623,
+    "title": "Gargantua and Pantagruel",
+    "year": 1533
+  },
+  {
+    "author": "Juan Rulfo",
+    "country": "Mexico",
+    "imageLink": "images/pedro-paramo.jpg",
+    "language": "Spanish",
+    "link": "https://en.wikipedia.org/wiki/Pedro_P%C3%A1ramo\\n",
+    "pages": 124,
+    "title": "Pedro P\\u00e1ramo",
+    "year": 1955
+  },
+  {
+    "author": "Rumi",
+    "country": "Sultanate of Rum",
+    "imageLink": "images/the-masnavi.jpg",
+    "language": "Persian",
+    "link": "https://en.wikipedia.org/wiki/Masnavi\\n",
+    "pages": 438,
+    "title": "The Masnavi",
+    "year": 1236
+  },
+  {
+    "author": "Salman Rushdie",
+    "country": "United Kingdom, India",
+    "imageLink": "images/midnights-children.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Midnight%27s_Children\\n",
+    "pages": 536,
+    "title": "Midnight's Children",
+    "year": 1981
+  },
+  {
+    "author": "Saadi",
+    "country": "Persia, Persian Empire",
+    "imageLink": "images/bostan.jpg",
+    "language": "Persian",
+    "link": "https://en.wikipedia.org/wiki/Bustan_(book)\\n",
+    "pages": 298,
+    "title": "Bostan",
+    "year": 1257
+  },
+  {
+    "author": "Tayeb Salih",
+    "country": "Sudan",
+    "imageLink": "images/season-of-migration-to-the-north.jpg",
+    "language": "Arabic",
+    "link": "https://en.wikipedia.org/wiki/Season_of_Migration_to_the_North\\n",
+    "pages": 139,
+    "title": "Season of Migration to the North",
+    "year": 1966
+  },
+  {
+    "author": "Jos\\u00e9 Saramago",
+    "country": "Portugal",
+    "imageLink": "images/blindness.jpg",
+    "language": "Portuguese",
+    "link": "https://en.wikipedia.org/wiki/Blindness_(novel)\\n",
+    "pages": 352,
+    "title": "Blindness",
+    "year": 1995
+  },
+  {
+    "author": "William Shakespeare",
+    "country": "England",
+    "imageLink": "images/hamlet.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Hamlet\\n",
+    "pages": 432,
+    "title": "Hamlet",
+    "year": 1603
+  },
+  {
+    "author": "William Shakespeare",
+    "country": "England",
+    "imageLink": "images/king-lear.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/King_Lear\\n",
+    "pages": 384,
+    "title": "King Lear",
+    "year": 1608
+  },
+  {
+    "author": "William Shakespeare",
+    "country": "England",
+    "imageLink": "images/othello.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Othello\\n",
+    "pages": 314,
+    "title": "Othello",
+    "year": 1609
+  },
+  {
+    "author": "Sophocles",
+    "country": "Greece",
+    "imageLink": "images/oedipus-the-king.jpg",
+    "language": "Greek",
+    "link": "https://en.wikipedia.org/wiki/Oedipus_the_King\\n",
+    "pages": 88,
+    "title": "Oedipus the King",
+    "year": -430
+  },
+  {
+    "author": "Stendhal",
+    "country": "France",
+    "imageLink": "images/le-rouge-et-le-noir.jpg",
+    "language": "French",
+    "link": "https://en.wikipedia.org/wiki/The_Red_and_the_Black\\n",
+    "pages": 576,
+    "title": "The Red and the Black",
+    "year": 1830
+  },
+  {
+    "author": "Laurence Sterne",
+    "country": "England",
+    "imageLink": "images/the-life-and-opinions-of-tristram-shandy.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/The_Life_and_Opinions_of_Tristram_Shandy,_Gentleman\\n",
+    "pages": 640,
+    "title": "The Life And Opinions of Tristram Shandy",
+    "year": 1760
+  },
+  {
+    "author": "Italo Svevo",
+    "country": "Italy",
+    "imageLink": "images/confessions-of-zeno.jpg",
+    "language": "Italian",
+    "link": "https://en.wikipedia.org/wiki/Zeno%27s_Conscience\\n",
+    "pages": 412,
+    "title": "Confessions of Zeno",
+    "year": 1923
+  },
+  {
+    "author": "Jonathan Swift",
+    "country": "Ireland",
+    "imageLink": "images/gullivers-travels.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Gulliver%27s_Travels\\n",
+    "pages": 178,
+    "title": "Gulliver's Travels",
+    "year": 1726
+  },
+  {
+    "author": "Leo Tolstoy",
+    "country": "Russia",
+    "imageLink": "images/war-and-peace.jpg",
+    "language": "Russian",
+    "link": "https://en.wikipedia.org/wiki/War_and_Peace\\n",
+    "pages": 1296,
+    "title": "War and Peace",
+    "year": 1867
+  },
+  {
+    "author": "Leo Tolstoy",
+    "country": "Russia",
+    "imageLink": "images/anna-karenina.jpg",
+    "language": "Russian",
+    "link": "https://en.wikipedia.org/wiki/Anna_Karenina\\n",
+    "pages": 864,
+    "title": "Anna Karenina",
+    "year": 1877
+  },
+  {
+    "author": "Leo Tolstoy",
+    "country": "Russia",
+    "imageLink": "images/the-death-of-ivan-ilyich.jpg",
+    "language": "Russian",
+    "link": "https://en.wikipedia.org/wiki/The_Death_of_Ivan_Ilyich\\n",
+    "pages": 92,
+    "title": "The Death of Ivan Ilyich",
+    "year": 1886
+  },
+  {
+    "author": "Mark Twain",
+    "country": "United States",
+    "imageLink": "images/the-adventures-of-huckleberry-finn.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Adventures_of_Huckleberry_Finn\\n",
+    "pages": 224,
+    "title": "The Adventures of Huckleberry Finn",
+    "year": 1884
+  },
+  {
+    "author": "Valmiki",
+    "country": "India",
+    "imageLink": "images/ramayana.jpg",
+    "language": "Sanskrit",
+    "link": "https://en.wikipedia.org/wiki/Ramayana\\n",
+    "pages": 152,
+    "title": "Ramayana",
+    "year": -450
+  },
+  {
+    "author": "Virgil",
+    "country": "Roman Empire",
+    "imageLink": "images/the-aeneid.jpg",
+    "language": "Classical Latin",
+    "link": "https://en.wikipedia.org/wiki/Aeneid\\n",
+    "pages": 442,
+    "title": "The Aeneid",
+    "year": -23
+  },
+  {
+    "author": "Vyasa",
+    "country": "India",
+    "imageLink": "images/the-mahab-harata.jpg",
+    "language": "Sanskrit",
+    "link": "https://en.wikipedia.org/wiki/Mahabharata\\n",
+    "pages": 276,
+    "title": "Mahabharata",
+    "year": -700
+  },
+  {
+    "author": "Walt Whitman",
+    "country": "United States",
+    "imageLink": "images/leaves-of-grass.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Leaves_of_Grass\\n",
+    "pages": 152,
+    "title": "Leaves of Grass",
+    "year": 1855
+  },
+  {
+    "author": "Virginia Woolf",
+    "country": "United Kingdom",
+    "imageLink": "images/mrs-dalloway.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/Mrs_Dalloway\\n",
+    "pages": 216,
+    "title": "Mrs Dalloway",
+    "year": 1925
+  },
+  {
+    "author": "Virginia Woolf",
+    "country": "United Kingdom",
+    "imageLink": "images/to-the-lighthouse.jpg",
+    "language": "English",
+    "link": "https://en.wikipedia.org/wiki/To_the_Lighthouse\\n",
+    "pages": 209,
+    "title": "To the Lighthouse",
+    "year": 1927
+  },
+  {
+    "author": "Marguerite Yourcenar",
+    "country": "France/Belgium",
+    "imageLink": "images/memoirs-of-hadrian.jpg",
+    "language": "French",
+    "link": "https://en.wikipedia.org/wiki/Memoirs_of_Hadrian\\n",
+    "pages": 408,
+    "title": "Memoirs of Hadrian",
+    "year": 1951
+  }
+]
+</script>
+
+  <script>
+
+    function New_book() {
+      const storedBook = JSON.parse(localStorage.getItem('books'));
+      if (storedBook && storedBook.length > 0) {
+        const lastIndex = storedBook.length - 1;
+        const lastBook = storedBook[lastIndex];
+        document.getElementById('title').textContent = lastBook.title;
+        document.getElementById('author').textContent = lastBook.author;
+        document.getElementById('year').textContent = "Published in " + lastBook.year;
+      }
+    }
+
+
+
+    /*  function toggleLoginLogout(isLoggedIn) {
+       const loginButton = document.getElementById('Login');
+       if (isLoggedIn) {
+         loginButton.innerHTML = '<i class="fas fa-sign-out-alt" id="theme-icon"></i> Logout';
+       } else {
+         loginButton.innerHTML = '<i class="fas fa-moon" id="theme-icon"></i> Login';
+       }
+     }  */
+
+
+    document.getElementById('sidebarToggle').addEventListener('click', function () {
+      document.getElementById('sidebar').classList.toggle('show');
+    });
+
+
+    document.addEventListener('click', function (event) {
+      const sidebar = document.getElementById('sidebar');
+      const toggleBtn = document.getElementById('sidebarToggle');
+      if (!sidebar.classList.contains('show')) return;
+      if (sidebar.contains(event.target) || toggleBtn.contains(event.target)) return;
+      sidebar.classList.remove('show');
+    });
+
+
+    function showPage(page) {
+      document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+      document.getElementById(page).style.display = 'block';
+      document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+      document.querySelector(\`.nav-link[href="#\${page}"]\`)?.classList.add('active');
+    }
+
+
+    function loadBooks() {
+      const container = document.getElementById('booksContainer');
+      if (!container) {
+        console.error("Container element with ID 'booksContainer' not found.");
+        return;
+      }
+      container.innerHTML = '';
+      const books = JSON.parse(localStorage.getItem('books')) || [];
+
+      books.forEach((book, index) => {
+
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'card mb-3';
+        const cardBody = document.createElement('div');
+        cardBody.className = 'card-body';
+
+        const titleEl = document.createElement('h5');
+        titleEl.className = 'card-title';
+        titleEl.id = \`book_title_\${index}\`;
+        titleEl.textContent = book.title || 'No Title';
+
+        const authorEl = document.createElement('h6');
+        authorEl.className = 'card-subtitle mb-2 text-muted';
+        authorEl.id = \`book_author_\${index}\`;
+        authorEl.textContent = book.author || 'No Author';
+
+        const yearEl = document.createElement('p');
+        yearEl.className = 'card-text';
+        yearEl.id = \`book_year_\${index}\`;
+        yearEl.textContent = book.publicationYear || 'No Year';
+
+        const editBtn = document.createElement('a');
+        editBtn.href = '#';
+        editBtn.className = 'btn btn-primary btn-sm btn-md-normal me-2 mb-2 mb-sm-0';
+        editBtn.textContent = 'Edit';
+        editBtn.setAttribute('role', 'button');
+
+        const deleteBtn = document.createElement('a');
+        deleteBtn.href = '#';
+        deleteBtn.className = 'btn btn-danger btn-sm btn-md-normal mb-2 mb-sm-0';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.onclick = () => {
+          delete_book(index);
+        };
+
+        cardBody.appendChild(titleEl);
+        cardBody.appendChild(authorEl);
+        cardBody.appendChild(yearEl);
+        cardBody.appendChild(editBtn);
+        cardBody.appendChild(deleteBtn);
+
+        cardDiv.appendChild(cardBody);
+        container.appendChild(cardDiv);
+
+      }
+      );
+    }
+
+
+    document.getElementById('Login').addEventListener('click', function () {
+      const buttonText = this.textContent.trim();
+
+      if (buttonText === 'Login') {
+        toggleLoginLogout(true);
+      } else if (buttonText === 'Logout') {
+        /* localStorage.removeItem('user'); */
+        getBooks();
+        location.reload();
+        toggleLoginLogout(false);
+      }
+    });
+
+
+    const quotes = [];
+
+    function loadQuotes() {
+      const quotesList = document.getElementById('quotesList');
+      quotesList.innerHTML = '';
+
+      quotes.forEach(q => {
+        const item = document.createElement('li');
+        item.className = 'list-group-item mb-2 p-1';
+        item.innerHTML = \`<blockquote class="blockquote mb-0 text-center">
+      <p class="fst-italic">\${q.text}</p>
+      <footer class="blockquote-footer fw-bold text-dark mb-3">\${q.author}</footer>
+    </blockquote>\`;
+        quotesList.appendChild(item);
+
+      });
+    }
+
+
+
+    document.getElementById('quoteForm').onsubmit = e => {
+      e.preventDefault();
+      const text = document.getElementById('quoteText').value.trim();
+      const author = document.getElementById('quoteAuthor').value.trim();
+
+      if (text && author) {
+        quotes.push({ text, author });
+        loadQuotes();
+        e.target.reset();
+      }
+    };
+    const themeBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+
+    themeBtn.onclick = () => {
+      document.body.classList.toggle('dark-theme');
+      if (document.body.classList.contains('dark-theme')) {
+        themeIcon.classList.remove('fa-moon');
+        console.log(themeIcon.innerHTML = "Light")
+        themeIcon.classList.add('fa-sun');
+      } else {
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.innerHTML = "Dark"
+        themeIcon.classList.add('fa-moon');
+      }
+    };
+
+
+    document.getElementById('addBookBtn').onclick = () => {
+      const modal = new bootstrap.Modal(document.getElementById('addBookModal'));
+      document.getElementById('addBookForm').reset();
+      modal.show();
+    };
+
+    document.getElementById('Login').onclick = () => {
+      /*  let user = localStorage.getItem("user");
+        let UserData = JSON.parse(user);
+        if (UserData == null) { */
+      const modal = new bootstrap.Modal(document.getElementById('LoginModal'));
+      document.getElementById('LoginForm').reset();
+      modal.show();
+    }
+
+
+
+
+    document.getElementById('addBookForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const title = document.getElementById('bookTitle').value.trim();
+      const author = document.getElementById('bookAuthor').value.trim();
+      const pubDateStr = document.getElementById('pubDate').value;
+      const year = parseInt(pubDateStr, 10);
+
+      const book = {
+        title,
+        author,
+        year
+      };
+
+      let books = JSON.parse(localStorage.getItem('books')) || [];
+
+      books.push(book);
+
+      localStorage.setItem('books', JSON.stringify(books));
+
+      getBooks();
+      const modalEl = document.getElementById('addBookModal');
+      const modal = bootstrap.Modal.getInstance(modalEl);
+      modal.hide();
+
+      /*  fetch('http://localhost:5296/api/blogposts/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(book)
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to add book: ' + response.status);
+            }
+            return response.json();
+          })
+          .then(data => {
+            localStorage.setItem("books", JSON.stringify(data))
+            getBooks();
+  
+            const modalEl = document.getElementById('addBookModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+            document.getElementById('addBookForm').reset();
+  
+          })
+          .catch(error => {
+            console.error('Error adding book:', error);
+          });  */
+    });
+
+
+
+    document.getElementById('register').addEventListener('click', function (e) {
+      e.preventDefault();
+
+      const UserData = {
+        Username: document.getElementById('Username').value,
+        Password: document.getElementById('Password').value,
+      };
+
+      if (UserData.Username !== "") {
+        let users = JSON.parse(localStorage.getItem('user')) || [];
+
+        users.push(UserData);
+
+        localStorage.setItem('user', JSON.stringify(users));
+        getBooks();
+
+        const loginModalEl = document.getElementById('LoginModal');
+        const loginModal = bootstrap.Modal.getInstance(loginModalEl);
+        loginModal.hide();
+      }
+
+      /* fetch('http://localhost:5296/api/auth/register', {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json'
+         },
+         body: JSON.stringify(UserData)
+       })
+         .then(response => {
+           if (!response.ok) {
+             throw new Error('Failed to add user: ' + response.status);
+           }
+           return response.json();
+         })
+         .then(data => {
+           console.log('user added:', data);
+         })
+         .catch(error => {
+           console.error('Error adding book:', error);
+         }); */
+    });
+
+
+    document.getElementById('login_button').addEventListener('click', function (e) {
+      e.preventDefault();
+
+      const username = document.getElementById('Username').value.trim();
+      const password = document.getElementById('Password').value.trim();
+
+      if (username === '' || password === '') {
+        const alertDiv = document.getElementById('inputAlert');
+        alertDiv.classList.remove('d-none');
+        alertDiv.classList.add('d-block');
+        return;
+      } else {
+        const alertDiv = document.getElementById('inputAlert');
+        alertDiv.classList.remove('d-block');
+        alertDiv.classList.add('d-none');
+      }
+      let UserData = {
+        Username: username,
+        Password: password,
+      };
+
+      const users = JSON.parse(localStorage.getItem('user')) || [];
+      console.log("hello", users);
+
+      const existingUser = users.find(user => user.Username === UserData.Username);
+
+      if (existingUser != undefined) {
+        getBooks();
+        const alertbutton = document.getElementById('alert_button');
+        alertbutton.classList.remove('d-block');
+        alertbutton.classList.add('d-none');
+        const loginModalEl = document.getElementById('LoginModal');
+        const loginModal = bootstrap.Modal.getInstance(loginModalEl);
+        loginModal.hide();
+      } else {
+        alert("User not found!");
+      }
+
+      /* fetch('http://localhost:5296/api/auth')
+         .then(response => {
+           if (!response.ok) {
+             throw new Error('Failed to fetch users: ' + response.status);
+           }
+           return response.json();
+         })
+         .then(users => {
+           const userFound = users.find(u => u.username === UserData.Username);
+ 
+           if (!userFound) {
+             const alertbutton = document.getElementById('alert_button');
+             alertbutton.classList.remove('d-none');
+             alertbutton.classList.add('d-block');
+           } else {
+             fetch('http://localhost:5296/api/auth/login', {
+               method: 'POST',
+               headers: {
+                 'Content-Type': 'application/json'
+               },
+               body: JSON.stringify(UserData)
+             })
+               .then(response => {
+                 if (!response.ok) {
+                   throw new Error('Login failed: ' + response.status);
+                 }
+                 return response.json();
+               })
+               .then(data => {
+                 localStorage.setItem("user", JSON.stringify({ Username: UserData.Username, data }));
+                 getBooks();
+                 const alertbutton = document.getElementById('alert_button');
+                 alertbutton.classList.remove('d-block');
+                 alertbutton.classList.add('d-none');
+                 const loginModalEl = document.getElementById('LoginModal');
+                 const loginModal = bootstrap.Modal.getInstance(loginModalEl);
+                 loginModal.hide();
+               });
+           }
+         })
+         .catch(error => {
+           console.error('Error during login:', error);
+         }) */
+    });
+
+
+    function createAndAddBookCard(book) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.style.width = '12rem';
+
+      card.innerHTML = \`
+ <div class="card-body">
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkLBB9QfyTHUdKm6uJLKtcrfbFz9Fp4kFtYpQy5ZUaLA&s=10" 
+       alt="Girl in a jacket" 
+       class="img-fluid" />
+  <h5 class="card-title books_title" style="font-family: Arial, Helvetica, sans-serif;" data-title=\${book.title} id="title_id">\${book.title}</h5>
+  <h6 class="card-subtitle mb-2 text-muted" style="font-family: Lato, sans-serif;">\${book.author}</h6>  
+  <p class="card-text" style="font-family: 'Open Sans', sans-serif;">Published in \${book.year}</p>
+  <button class="btn btn-primary edit-btn" data-id="\${book.id}">Edit</button>
+  <button class="btn btn-danger delete-btn" data-id="\${book.id}">Delete</button>
+</div>
+  \`;
+
+      document.querySelector('#bookCardsContainer').appendChild(card);
+
+      const editBtn = card.querySelector('.edit-btn');
+
+      editBtn.onclick = () => {
+        const modal = new bootstrap.Modal(document.getElementById('editBookModal'));
+        document.getElementById('EditBookForm').reset();
+        modal.show();
+      };
+
+      document.getElementById('EditBookForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const titleInput = document.getElementById("title_id");
+        const editbook_title = document.getElementById("editbookTitle");
+        const authorInput = document.getElementById("editBookAuthor");
+
+        const pubDateStr = document.getElementById('publish_year').value;
+        const year = parseInt(pubDateStr, 10);
+        let books_data = JSON.parse(localStorage.getItem("books")) || [];
+        let index = books_data.findIndex(books => books.title == titleInput.dataset.title)
+        if (index !== -1) {
+          const newBookData = {
+            title: editbook_title.value,
+            author: authorInput.value,
+            year: year
+          };
+          books_data[index] = newBookData;
+          localStorage.setItem("books", JSON.stringify(books_data));
+
+          const loginModalEl = document.getElementById('editBookModal');
+          const loginModal = bootstrap.Modal.getInstance(loginModalEl);
+
+          loginModal.hide();
+
+        } else {
+        }
+      })
+
+      /*  fetch(\`http://localhost:5296/api/BlogPosts/\${book.id}\`, {
+          method: 'PUT', // Correct method for update
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedBook)
+        })
+          .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+              return response.text().then(text => { throw new Error('Failed to update: ' + text); });
+            }
+            if (response.status === 204) {
+              return null;
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('Updated data:', data);
+            const modalEl = document.getElementById('editBookModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+            document.getElementById('addBookForm').reset();
+            location.reload;
+            loadBooks();
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            console.log('Error updating book: ' + error.message);
+          });   */
+
+
+
+      let deleteBtn = card.querySelector('.delete-btn');
+      deleteBtn.onclick = () => {
+        let booksData = JSON.parse(localStorage.getItem('books')) || [];
+
+        const searchCriteria = {
+          title: book.title,
+          author: book.author,
+          year: book.year
+        };
+
+        const index = booksData.findIndex(b =>
+          b.title === searchCriteria.title &&
+          b.author === searchCriteria.author &&
+          b.year === searchCriteria.year
+        );
+
+        if (index !== -1) {
+          booksData.splice(index, 1);
+
+          localStorage.setItem('books', JSON.stringify(booksData));
+
+          card.remove();
+
+          alert('Book deleted successfully');
+        } else {
+          alert('Book not found in storage');
+        }
+      };
+
+      /*  fetch(\`http://localhost:5296/api/BlogPosts/\${book.id}\`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(DeleteBook) // remove this if not needed
+        })
+          .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+              return response.text().then(text => {
+                throw new Error('Failed to delete: ' + text);
+              });
+            }
+            getBooks();
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting book: ' + error.message);
+          }); */
+    };
+
+
+
+    document.getElementById('LoginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const username = document.getElementById('Username').value;
+      const password = document.getElementById('Password').value;
+
+      fetch('http://localhost:5296/api/blogposts/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Login failed: ' + response.status);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Login successful:', data);
+          const loginModalEl = document.getElementById('LoginModal');
+          const loginModal = bootstrap.Modal.getInstance(loginModalEl);
+          loginModal.hide();
+        })
+        .catch(error => {
+          console.error('Error during login:', error);
+          alert('Login failed. Please check your credentials.');
+        });
+    });
+
+
+
+
+    function getBooks() {
+      const users = JSON.parse(localStorage.getItem('user')) || [];
+
+      if (users.length !== 0) {
+        document.getElementById('addBookBtn').disabled = false;
+        bookCardsContainer.innerHTML = '';
+        /* const jsonData = document.getElementById('jsonData').textContent;
+       const booksArray = JSON.parse(jsonData); */
+
+        let data = JSON.parse(localStorage.getItem('books'))
+        if (data) {
+          data.forEach(book => {
+            console.log('Title:', book.title);
+            console.log('Author:', book.author);
+            createAndAddBookCard(book);
+            New_book();
+          })
+        }
+      }
+      else {
+        document.getElementById('addBookBtn').disabled = true;
+      }
+
+      /*  fetch('http://localhost:5296/api/auth')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to fetch books: ' + response.status);
+            }
+            return response.json();
+          })
+          .then(books => {
+            if (books.find(u => u.username === JSON.parse(localStorage.getItem("user")).Username)) {
+              document.getElementById('addBookBtn').disabled = false;
+  
+              fetch('http://localhost:5296/api/blogposts/')
+                .then(response => {
+                  if (!response.ok) {
+                    throw new Error('Failed to fetch books: ' + response.status);
+                  }
+                  return response.json();
+                })
+                .then(books => {
+                  bookCardsContainer.innerHTML = '';
+                  books.forEach(book => createAndAddBookCard(book));
+                  New_book();
+  
+                })
+                .catch(error => {
+                  console.error('Error fetching books:', error);
+                });
+  
+            } else {
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching books:', error);
+          }); */
+    }
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+      getBooks();
+
+      const editBookModalEl = document.getElementById('editBookModal');
+      if (editBookModalEl) {
+        editBookModalEl.addEventListener('hidden.bs.modal', () => {
+          getBooks();
+        });
+      }
+
+      /* const user = JSON.parse(localStorage.getItem('user'));
+       if (user !== null && user.data.token !== "") {
+         toggleLoginLogout(true);
+       } else {
+         toggleLoginLogout(false);
+       } */
+
+    });
+
+    window.onload = () => {
+      showPage('home');
+      loadQuotes();
+    };
+
+
+  </script>
+  <app-root></app-root>
+
+<script src="main-UHKZM5QJ.js" type="module"></script></body>
+
+</html>`;
