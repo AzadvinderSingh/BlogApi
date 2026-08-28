@@ -1,4 +1,4 @@
-name: Build and deploy ASP.Net Core app to Azure Web App - BookStore
+name: Build and deploy ASP.Net Core app to Azure Web App - BlogApi
 
 on:
   push:
@@ -10,9 +10,9 @@ jobs:
   build:
     runs-on: windows-latest
     env:
-      DOTNET_ROOT: "${{ github.workspace }}\\myapp"  # Define output directory
+      DOTNET_ROOT: "${{ github.workspace }}\\myapp"  # Output directory
     permissions:
-      contents: read  # Required for actions/checkout
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -24,8 +24,8 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o "${{ env.DOTNET_ROOT }}"
+      - name: Publish the app
+        run: dotnet publish ./BlogApi/BlogApi.csproj -c Release -o "${{ env.DOTNET_ROOT }}"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -40,7 +40,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write  # Required for requesting the JWT
+      id-token: write
       contents: read
     steps:
       - name: Download artifact from build job
@@ -61,4 +61,4 @@ jobs:
         with:
           app-name: 'BookStore'
           slot-name: 'Production'
-          package: "${{ github.workspace }}/myapp"  # Path to published output
+          package: "${{ github.workspace }}\\myapp"
