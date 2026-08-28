@@ -71,10 +71,9 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = ""
 });
 
-// Register fallback to serve index.html for SPA routes
+
 app.MapFallbackToFile("index.html");
 
-// Register your API and default routes
 app.MapControllerRoute(
     name: "api",
     pattern: "api/{controller}/{action}/{id?}"
@@ -85,11 +84,10 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}"
 );
 
-// No duplicate fallback routes here
 
 if (app.Environment.IsDevelopment())
 {
-    // Development specific code if needed
+    
 }
 
 app.Run();
