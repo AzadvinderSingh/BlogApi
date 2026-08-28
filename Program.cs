@@ -81,8 +81,7 @@ app.UseStaticFiles();
 
 if (app.Environment.IsDevelopment())
 {
-    // e.g. app.UseDeveloperExceptionPage();
-    // e.g. Swagger/OpenAPI UI here
+   
 }
 else
 {
@@ -99,10 +98,8 @@ app.UseCors("AllowAngularDev");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// API routes (attribute-routed controllers)
 app.MapControllers();
 
-// SPA fallback — anything not matched by an API route serves index.html
 app.MapFallbackToFile("index.html");
 
 app.Run();
