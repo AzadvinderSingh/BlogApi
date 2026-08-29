@@ -15,9 +15,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
-    <!-- Only needed if you want Swagger UI / OpenAPI spec generation in development -->
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+    <!-- System.IdentityModel.Tokens.Jwt removed: it's already a transitive dependency
+         of Microsoft.AspNetCore.Authentication.JwtBearer. Pinning it separately to 8.2.1
+         created a version conflict with the Microsoft.IdentityModel.Tokens version
+         JwtBearer 9.0.0 actually needs, causing the FileNotFoundException at runtime. -->
   </ItemGroup>
 
   <ItemGroup>

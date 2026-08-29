@@ -384,8 +384,3 @@ C:\Users\Azadvinder Singh\BlogApi\bin\Debug\net9.0\publish-output\publish-output
 C:\Users\Azadvinder Singh\BlogApi\bin\Debug\net9.0\publish-output\publish-output\tsconfig.app.json
 C:\Users\Azadvinder Singh\BlogApi\bin\Debug\net9.0\publish-output\publish-output\tsconfig.json
 C:\Users\Azadvinder Singh\BlogApi\bin\Debug\net9.0\publish-output\publish-output\tsconfig.spec.json
-C:\Users\Azadvinder Singh\BlogApi\bin\Debug\net9.0\Microsoft.OpenApi.dll
-C:\Users\Azadvinder Singh\BlogApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
-C:\Users\Azadvinder Singh\BlogApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
-C:\Users\Azadvinder Singh\BlogApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
-C:\Users\Azadvinder Singh\BlogApi\obj\Debug\net9.0\BlogApi.MvcApplicationPartsAssemblyInfo.cs

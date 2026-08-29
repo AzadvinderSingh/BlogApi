@@ -59,4 +59,8 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'Books123'
+<<<<<<< HEAD
           package: "${{ github.workspace }}/publish"
+=======
+          package: "${{ github.workspace }}/publish"
+>>>>>>> a3ed77d5261d433cb906fa748ba26daa88ec0a9a

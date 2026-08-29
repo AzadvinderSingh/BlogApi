@@ -1776,6 +1776,8 @@
         Password: document.getElementById('Password').value,
       };
 
+
+      console.log(UserData);
       if (UserData.Username !== "") {
         let users = JSON.parse(localStorage.getItem('user')) || [];
 
@@ -1783,6 +1785,10 @@
 
         localStorage.setItem('user', JSON.stringify(users));
         getBooks();
+
+        console.log(UserData)
+                console.log(users)
+
 
         const loginModalEl = document.getElementById('LoginModal');
         const loginModal = bootstrap.Modal.getInstance(loginModalEl);
@@ -1832,10 +1838,14 @@
         Password: password,
       };
 
+      console.log(UserData);
+
       const users = JSON.parse(localStorage.getItem('user')) || [];
       console.log("hello", users);
 
       const existingUser = users.find(user => user.Username === UserData.Username);
+
+      
 
       if (existingUser != undefined) {
 
@@ -1855,6 +1865,7 @@
              alertbutton.classList.remove('d-none');
              alertbutton.classList.add('d-block');
            } else {  */
+
              fetch('https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net/api/auth/login', {
                method: 'POST',
                headers: {
@@ -1869,6 +1880,7 @@
                  return response.json();
                })
                .then(data => {
+                console.log(data);
                  localStorage.setItem("user", JSON.stringify({ Username: UserData.Username, data }));
                  getBooks();
                  const alertbutton = document.getElementById('alert_button');
