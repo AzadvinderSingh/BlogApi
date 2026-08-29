@@ -1822,6 +1822,9 @@
     document.getElementById('login_button').addEventListener('click', function (e) {
       e.preventDefault();
 
+document.getElementById('Username').value = ''; 
+document.getElementById('Password').value = ''; 
+
       const username = document.getElementById('Username').value.trim();
       const password = document.getElementById('Password').value.trim();
 
@@ -1845,14 +1848,11 @@
       const users = JSON.parse(localStorage.getItem('user')) || [];
       console.log("hello", users);
 
-      if(users.length!==0 || users.Username!==""){
-     users.find(user => user.Username === UserData.Username);
-console.log("working")
-      }
+      const existingUser = users.find(user => user.Username === UserData.Username);
 
       
 console.log(existingUser);
-      if (existingUser != undefined || existingUser !=[]) {
+      if (existingUser != undefined) {
 
 
 /* fetch('https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net/api/auth/login')
@@ -1893,6 +1893,7 @@ console.log(existingUser);
                  alertbutton.classList.add('d-none');
                  const loginModalEl = document.getElementById('LoginModal');
                  const loginModal = bootstrap.Modal.getInstance(loginModalEl);
+
                  loginModal.hide();
                }) .catch(error => {
            console.error('Error during login:', error);
