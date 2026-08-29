@@ -1838,18 +1838,9 @@
       const existingUser = users.find(user => user.Username === UserData.Username);
 
       if (existingUser != undefined) {
-        getBooks();
-        const alertbutton = document.getElementById('alert_button');
-        alertbutton.classList.remove('d-block');
-        alertbutton.classList.add('d-none');
-        const loginModalEl = document.getElementById('LoginModal');
-        const loginModal = bootstrap.Modal.getInstance(loginModalEl);
-        loginModal.hide();
-      } else {
-        alert("User not found!");
-      }
 
-      /* fetch('http://localhost:5296/api/auth')
+
+/* fetch('https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net/api/auth/login')
          .then(response => {
            if (!response.ok) {
              throw new Error('Failed to fetch users: ' + response.status);
@@ -1863,8 +1854,8 @@
              const alertbutton = document.getElementById('alert_button');
              alertbutton.classList.remove('d-none');
              alertbutton.classList.add('d-block');
-           } else {
-             fetch('http://localhost:5296/api/auth/login', {
+           } else {  */
+             fetch('https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net/api/auth/login', {
                method: 'POST',
                headers: {
                  'Content-Type': 'application/json'
@@ -1885,14 +1876,16 @@
                  alertbutton.classList.add('d-none');
                  const loginModalEl = document.getElementById('LoginModal');
                  const loginModal = bootstrap.Modal.getInstance(loginModalEl);
+                                  getBooks();
+
                  loginModal.hide();
-               });
+               }) .catch(error => {
+           console.error('Error during login:', error);
+         })
            }
          })
-         .catch(error => {
-           console.error('Error during login:', error);
-         }) */
-    });
+        
+
 
 
     function createAndAddBookCard(book) {
