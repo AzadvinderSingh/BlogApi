@@ -1832,11 +1832,14 @@
         Password: password,
       };
 
+      console.log(UserData);
+
       const users = JSON.parse(localStorage.getItem('user')) || [];
       console.log("hello", users);
 
       const existingUser = users.find(user => user.Username === UserData.Username);
 
+      
       if (existingUser != undefined) {
 
 
@@ -1855,7 +1858,7 @@
              alertbutton.classList.remove('d-none');
              alertbutton.classList.add('d-block');
            } else {  */
-            
+
              fetch('https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net/api/auth/login', {
                method: 'POST',
                headers: {
