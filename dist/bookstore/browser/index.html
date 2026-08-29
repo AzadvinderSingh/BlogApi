@@ -1769,56 +1769,36 @@
 
 
     document.getElementById('register').addEventListener('click', function (e) {
-      e.preventDefault();
+  e.preventDefault();
 
-      const UserData = {
-        Username: document.getElementById('Username').value,
-        Password: document.getElementById('Password').value,
-      };
+  const UserData = {
+    Username: document.getElementById('Username').value.trim(),
+    Password: document.getElementById('Password').value.trim(),
+  };
 
+  console.log(UserData);
 
-      console.log(UserData);
-      if (UserData.Username !== "") {
+  if (UserData.Username !== "") {
+    let users = JSON.parse(localStorage.getItem('user'));
 
-        console.log(typeof(localstorage.getItem("user")));
-        let users = JSON.parse(localStorage.getItem('user')) || [];
+    // Ensure users is actually an array before pushing
+    if (!Array.isArray(users)) {
+      users = [];
+    }
 
-        console.log(users);
+    users.push(UserData);
 
-        users.push(UserData);
+    localStorage.setItem('user', JSON.stringify(users));
+    getBooks();
 
-        localStorage.setItem('user', JSON.stringify(users));
-        getBooks();
+    console.log(UserData);
+    console.log(users);
 
-        console.log(UserData)
-                console.log(users)
-
-
-        const loginModalEl = document.getElementById('LoginModal');
-        const loginModal = bootstrap.Modal.getInstance(loginModalEl);
-        loginModal.hide();
-      }
-
-      /* fetch('http://localhost:5296/api/auth/register', {
-         method: 'POST',
-         headers: {
-           'Content-Type': 'application/json'
-         },
-         body: JSON.stringify(UserData)
-       })
-         .then(response => {
-           if (!response.ok) {
-             throw new Error('Failed to add user: ' + response.status);
-           }
-           return response.json();
-         })
-         .then(data => {
-           console.log('user added:', data);
-         })
-         .catch(error => {
-           console.error('Error adding book:', error);
-         }); */
-    });
+    const loginModalEl = document.getElementById('LoginModal');
+    const loginModal = bootstrap.Modal.getInstance(loginModalEl);
+    loginModal.hide();
+  }
+});
 
 
     document.getElementById('login_button').addEventListener('click', function (e) {
