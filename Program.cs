@@ -4,16 +4,20 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
+// Determine content root the same way WebApplication.CreateBuilder does by default,
+// so we can compute the Angular build path BEFORE creating the builder.
+var contentRoot = Directory.GetCurrentDirectory();
+var browserPath = Path.Combine(contentRoot, "dist", "bookstore", "browser");
+var webRootExists = Directory.Exists(browserPath);
 
-// Locate the Angular build output relative to the app's content root
-var browserPath = Path.Combine(builder.Environment.ContentRootPath, "dist", "bookstore", "browser");
-
-if (Directory.Exists(browserPath))
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
-    builder.WebHost.UseWebRoot(browserPath);
-}
-else
+    Args = args,
+    ContentRootPath = contentRoot,
+    WebRootPath = webRootExists ? browserPath : null // null falls back to default wwwroot
+});
+
+if (!webRootExists)
 {
     Console.WriteLine($"WARNING: Angular build output not found at {browserPath}. " +
                        "Run 'ng build' in the Angular project, or update this path. " +
@@ -74,7 +78,7 @@ app.UseStaticFiles();
 
 if (app.Environment.IsDevelopment())
 {
-   
+
 }
 else
 {
