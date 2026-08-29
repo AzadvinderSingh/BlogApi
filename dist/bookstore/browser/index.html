@@ -3287,68 +3287,39 @@
 
 
 
+function getBooks() {
+  const users = JSON.parse(localStorage.getItem('user')) || [];
 
-    function getBooks() {
-      const users = JSON.parse(localStorage.getItem('user')) || [];
+  const loggedInUser = users.find(u => u.token && u.token !== '');
 
+  if (loggedInUser) {
+    document.getElementById('addBookBtn').disabled = false;
+    bookCardsContainer.innerHTML = '';
 
-console.log(Object.keys(users[0]));
-
-if (users.length !== 0) {
-        document.getElementById('addBookBtn').disabled = false;
-        bookCardsContainer.innerHTML = '';
-        /* const jsonData = document.getElementById('jsonData').textContent;
-       const booksArray = JSON.parse(jsonData); */
-
-        let data = JSON.parse(localStorage.getItem('books'))
-        if (data) {
-          data.forEach(book => {
-            console.log('Title:', book.title);
-            console.log('Author:', book.author);
-            createAndAddBookCard(book);
-            New_book();
-          })
-        }
-      }
-      else {
-        document.getElementById('addBookBtn').disabled = true;
-      }
-
-      /*  fetch('http://localhost:5296/api/auth')
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Failed to fetch books: ' + response.status);
-            }
-            return response.json();
-          })
-          .then(books => {
-            if (books.find(u => u.username === JSON.parse(localStorage.getItem("user")).Username)) {
-              document.getElementById('addBookBtn').disabled = false;
-  
-              fetch('http://localhost:5296/api/blogposts/')
-                .then(response => {
-                  if (!response.ok) {
-                    throw new Error('Failed to fetch books: ' + response.status);
-                  }
-                  return response.json();
-                })
-                .then(books => {
-                  bookCardsContainer.innerHTML = '';
-                  books.forEach(book => createAndAddBookCard(book));
-                  New_book();
-  
-                })
-                .catch(error => {
-                  console.error('Error fetching books:', error);
-                });
-  
-            } else {
-            }
-          })
-          .catch(error => {
-            console.error('Error fetching books:', error);
-          }); */
+    let data = JSON.parse(localStorage.getItem('books'));
+    if (data) {
+      data.forEach(book => {
+        console.log('Title:', book.title);
+        console.log('Author:', book.author);
+        createAndAddBookCard(book);
+        New_book();
+      });
     }
+  } else {
+    document.getElementById('addBookBtn').disabled = true;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  getBooks();
+
+  const editBookModalEl = document.getElementById('editBookModal');
+  if (editBookModalEl) {
+    editBookModalEl.addEventListener('hidden.bs.modal', () => {
+      getBooks();
+    });
+  }
+});
 
 
     document.addEventListener('DOMContentLoaded', () => {
