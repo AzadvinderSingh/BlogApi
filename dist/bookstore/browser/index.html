@@ -1845,7 +1845,10 @@
       const users = JSON.parse(localStorage.getItem('user')) || [];
       console.log("hello", users);
 
-      const existingUser = users.find(user => user.Username === UserData.Username);
+      if(users.length!==0 || users.Username!==""){
+     users.find(user => user.Username === UserData.Username);
+console.log("working")
+      }
 
       
 console.log(existingUser);
