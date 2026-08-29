@@ -1781,6 +1781,8 @@
       if (UserData.Username !== "") {
         let users = JSON.parse(localStorage.getItem('user')) || [];
 
+        console.log(users);
+
         users.push(UserData);
 
         localStorage.setItem('user', JSON.stringify(users));
