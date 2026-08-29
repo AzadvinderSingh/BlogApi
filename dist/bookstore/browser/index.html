@@ -1819,22 +1819,37 @@
     });
 
 
-   const users = JSON.parse(localStorage.getItem('user')) || [];
+    document.getElementById('login_button').addEventListener('click', function (e) {
+      e.preventDefault();
 
-let existingUser; // declared outside so it's accessible below
-if (users.length === 0) {
-  console.log("No users found.");
-} else {
-  existingUser = users.find(user => user.Username === UserData.Username);
-  if (!existingUser) {
-    console.log("Username not found.");
-  }
-}
+      const username = document.getElementById('Username').value.trim();
+      const password = document.getElementById('Password').value.trim();
 
+      if (username === '' || password === '') {
+        const alertDiv = document.getElementById('inputAlert');
+        alertDiv.classList.remove('d-none');
+        alertDiv.classList.add('d-block');
+        return;
+      } else {
+        const alertDiv = document.getElementById('inputAlert');
+        alertDiv.classList.remove('d-block');
+        alertDiv.classList.add('d-none');
+      }
+      let UserData = {
+        Username: username,
+        Password: password,
+      };
+
+      console.log(UserData);
+
+      const users = JSON.parse(localStorage.getItem('user')) || [];
+      console.log("hello", users);
+
+      const existingUser = users.find(user => user.Username === UserData.Username);
+
+      
 console.log(existingUser);
-if (existingUser != undefined) {
-  console.log("working");
-}
+      if (existingUser != undefined || existingUser !=[]) {
 
 
 /* fetch('https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net/api/auth/login')
@@ -1879,7 +1894,8 @@ if (existingUser != undefined) {
                }) .catch(error => {
            console.error('Error during login:', error);
          })
-          
+           }
+         })
         
 
 
