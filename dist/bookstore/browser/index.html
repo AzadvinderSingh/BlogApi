@@ -1843,10 +1843,15 @@
       console.log(UserData);
 
       const users = JSON.parse(localStorage.getItem('user')) || [];
-      console.log("hello", users);
 
-      const existingUser = users.find(user => user.Username === UserData.Username);
-
+if (users.length === 0) {
+  console.log("No users found.");
+} else {
+  const existingUser = users.find(user => user.Username === UserData.Username);
+  if (!existingUser) {
+    console.log("Username not found.");
+  }
+}
       
 console.log(existingUser);
       if (existingUser != undefined) {
@@ -1890,8 +1895,6 @@ console.log(existingUser);
                  alertbutton.classList.add('d-none');
                  const loginModalEl = document.getElementById('LoginModal');
                  const loginModal = bootstrap.Modal.getInstance(loginModalEl);
-                                  getBooks();
-
                  loginModal.hide();
                }) .catch(error => {
            console.error('Error during login:', error);
