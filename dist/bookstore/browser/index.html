@@ -1904,6 +1904,7 @@
       return response.json();
     })
     .then(data => {
+      console.log(data)
       // Update the SAME array — don't overwrite it with a plain object
       let updatedUsers = JSON.parse(localStorage.getItem('user'));
       if (!Array.isArray(updatedUsers)) {
