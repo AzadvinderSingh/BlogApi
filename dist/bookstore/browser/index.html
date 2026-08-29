@@ -1869,6 +1869,7 @@
                  return response.json();
                })
                .then(data => {
+                console.log(data);
                  localStorage.setItem("user", JSON.stringify({ Username: UserData.Username, data }));
                  getBooks();
                  const alertbutton = document.getElementById('alert_button');
