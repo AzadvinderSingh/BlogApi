@@ -1776,12 +1776,8 @@
     Password: document.getElementById('Password').value.trim(),
   };
 
-  console.log(UserData);
-
   if (UserData.Username !== "") {
     let users = JSON.parse(localStorage.getItem('user'));
-
-    // Ensure users is actually an array before pushing
     if (!Array.isArray(users)) {
       users = [];
     }
@@ -1790,10 +1786,6 @@
 
     localStorage.setItem('user', JSON.stringify(users));
     getBooks();
-
-    console.log(UserData);
-    console.log(users);
-
     const loginModalEl = document.getElementById('LoginModal');
     const loginModal = bootstrap.Modal.getInstance(loginModalEl);
     loginModal.hide();
@@ -1801,88 +1793,141 @@
 });
 
 
-    document.getElementById('login_button').addEventListener('click', function (e) {
-      e.preventDefault();
+  document.getElementById('login_button').addEventListener('click', function (e) {
+  e.preventDefault();
 
+  const username = document.getElementById('Username').value.trim();
+  const password = document.getElementById('Password').value.trim();
 
-      const username = document.getElementById('Username').value.trim();
-      const password = document.getElementById('Password').value.trim();
+  if (username === '' || password === '') {
+    const alertDiv = document.getElementById('inputAlert');
+    alertDiv.classList.remove('d-none');
+    alertDiv.classList.add('d-block');
+    return;
+  } else {
+    const alertDiv = document.getElementById('inputAlert');
+    alertDiv.classList.remove('d-block');
+    alertDiv.classList.add('d-none');
+  }
 
-      if (username === '' || password === '') {
-        const alertDiv = document.getElementById('inputAlert');
-        alertDiv.classList.remove('d-none');
-        alertDiv.classList.add('d-block');
-        return;
-      } else {
-        const alertDiv = document.getElementById('inputAlert');
-        alertDiv.classList.remove('d-block');
-        alertDiv.classList.add('d-none');
+  let UserData = {
+    Username: username,
+    Password: password,
+  };
+
+  let users = JSON.parse(localStorage.getItem('user'));
+  if (!Array.isArray(users)) {
+    users = [];
+  }
+
+  const existingUser = users.find(user => user.Username === UserData.Username);
+  console.log(existingUser);
+
+  fetch('https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net/api/auth/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(UserData)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Login failed: ' + response.status);
       }
-      let UserData = {
-        Username: username,
-        Password: password,
-      };
+      return response.json();
+    })
+    .then(data => {
+      // Update the SAME array — don't overwrite it with a plain object
+      let updatedUsers = JSON.parse(localStorage.getItem('user'));
+      if (!Array.isArray(updatedUsers)) {
+        updatedUsers = [];
+      }
+      updatedUsers = updatedUsers.filter(u => u.Username !== UserData.Username);
+      updatedUsers.push({ Username: UserData.Username, token: data.token });
 
-      console.log(UserData);
+      localStorage.setItem('user', JSON.stringify(updatedUsers));
 
-      const users = JSON.parse(localStorage.getItem('user')) || [];
-      console.log("hello", users);
+      getBooks();
 
-      const existingUser = users.find(user => user.Username === UserData.Username);
+      const alertbutton = document.getElementById('alert_button');
+      alertbutton.classList.remove('d-block');
+      alertbutton.classList.add('d-none');
 
-      
-console.log(existingUser);
-      if (existingUser != undefined) {
+      const loginModalEl = document.getElementById('LoginModal');
+      const loginModal = bootstrap.Modal.getInstance(loginModalEl);
+      loginModal.hide();
+    })
+    .catch(error => {
+      console.error('Error during login:', error);
+    });
+});document.getElementById('login_button').addEventListener('click', function (e) {
+  e.preventDefault();
 
+  const username = document.getElementById('Username').value.trim();
+  const password = document.getElementById('Password').value.trim();
 
-/* fetch('https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net/api/auth/login')
-         .then(response => {
-           if (!response.ok) {
-             throw new Error('Failed to fetch users: ' + response.status);
-           }
-           return response.json();
-         })
-         .then(users => {
-           const userFound = users.find(u => u.username === UserData.Username);
- 
-           if (!userFound) {
-             const alertbutton = document.getElementById('alert_button');
-             alertbutton.classList.remove('d-none');
-             alertbutton.classList.add('d-block');
-           } else {  */
+  if (username === '' || password === '') {
+    const alertDiv = document.getElementById('inputAlert');
+    alertDiv.classList.remove('d-none');
+    alertDiv.classList.add('d-block');
+    return;
+  } else {
+    const alertDiv = document.getElementById('inputAlert');
+    alertDiv.classList.remove('d-block');
+    alertDiv.classList.add('d-none');
+  }
 
-             fetch('https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net/api/auth/login', {
-               method: 'POST',
-               headers: {
-                 'Content-Type': 'application/json'
-               },
-               body: JSON.stringify(UserData)
-             })
-               .then(response => {
-                 if (!response.ok) {
-                   throw new Error('Login failed: ' + response.status);
-                 }
-                 return response.json();
-               })
-               .then(data => {
-                console.log(data);
-                 localStorage.setItem("user", JSON.stringify({ Username: UserData.Username, data }));
-                 getBooks();
-                 const alertbutton = document.getElementById('alert_button');
-                 alertbutton.classList.remove('d-block');
-                 alertbutton.classList.add('d-none');
-                 const loginModalEl = document.getElementById('LoginModal');
-                 const loginModal = bootstrap.Modal.getInstance(loginModalEl);
+  let UserData = {
+    Username: username,
+    Password: password,
+  };
 
-                 loginModal.hide();
-               }) .catch(error => {
-           console.error('Error during login:', error);
-         })
-           }
-         })
-        
+  let users = JSON.parse(localStorage.getItem('user'));
+  if (!Array.isArray(users)) {
+    users = [];
+  }
 
+  const existingUser = users.find(user => user.Username === UserData.Username);
+  console.log(existingUser);
 
+  fetch('https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net/api/auth/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(UserData)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Login failed: ' + response.status);
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Update the SAME array — don't overwrite it with a plain object
+      let updatedUsers = JSON.parse(localStorage.getItem('user'));
+      if (!Array.isArray(updatedUsers)) {
+        updatedUsers = [];
+      }
+      updatedUsers = updatedUsers.filter(u => u.Username !== UserData.Username);
+      updatedUsers.push({ Username: UserData.Username, token: data.token });
+
+      localStorage.setItem('user', JSON.stringify(updatedUsers));
+
+      getBooks();
+
+      const alertbutton = document.getElementById('alert_button');
+      alertbutton.classList.remove('d-block');
+      alertbutton.classList.add('d-none');
+
+      const loginModalEl = document.getElementById('LoginModal');
+      const loginModal = bootstrap.Modal.getInstance(loginModalEl);
+      loginModal.hide();
+    })
+    .catch(error => {
+      console.error('Error during login:', error);
+    });
+});
 
     function createAndAddBookCard(book) {
       const card = document.createElement('div');
