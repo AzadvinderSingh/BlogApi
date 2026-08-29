@@ -1780,7 +1780,7 @@
       console.log(UserData);
       if (UserData.Username !== "") {
 
-        console.log(localStorage.getItem("user"));
+        console.log(typeof(localstorage.getItem("user")));
         let users = JSON.parse(localStorage.getItem('user')) || [];
 
         console.log(users);
