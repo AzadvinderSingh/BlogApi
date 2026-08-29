@@ -3304,8 +3304,6 @@
         let data = JSON.parse(localStorage.getItem('books'));
         if (data) {
           data.forEach(book => {
-            console.log('Title:', book.title);
-            console.log('Author:', book.author);
             createAndAddBookCard(book);
             New_book();
           });
