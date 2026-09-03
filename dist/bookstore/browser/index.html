@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" data-beasties-container>
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dark Mode Full Page</title>
+  <title>Bookstore & Quotes</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <!-- FIX: the old kit.fontawesome.com script used FA's documentation placeholder ID
+       (a076d05399) which is not a real kit and will not load icons. Using the free
+       CDN build instead — swap for your own kit URL if you have a Font Awesome account. -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     body {
       --bg-color: #ffffff;
@@ -14,39 +17,22 @@
       --header-bg: #e0e0e0;
       --sidebar-bg: #343a40;
       --footer-bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --card-text: #212529;
+      --card-muted: #6c757d;
     }
-
-    footer {
-      position: relative;
-      z-index: 1;
-    }
-
-    body>footer,
-    .footer_page {
-      position: relative;
-      z-index: 1;
-    }
-
-
-    .blockquote-footer {
-      display: block !important;
-      position: static !important;
-      margin-top: 0.5rem !important;
-      clear: both;
-    }
-
-    .blockquote p {
-      margin-bottom: 0.5rem !important;
-      overflow: visible;
-    }
-
 
     body.dark-theme {
       --bg-color: #212529;
       --text-color: #f8f9fa;
       --header-bg: #343a40;
-      --sidebar-bg: #212529;
+      --sidebar-bg: #16181b;
       --footer-bg: #343a40;
+      /* FIX: cards/modals used to stay hardcoded white in dark mode.
+         Now they follow the theme too. */
+      --card-bg: #2b2f36;
+      --card-text: #f1f3f5;
+      --card-muted: #adb5bd;
     }
 
     body {
@@ -56,47 +42,7 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-    }
-
-    .page {
-      margin-left: 58px;
-      ;
-      margin-right: 12px;
-    }
-
-    .navbar-brand {
-      font-weight: 600;
-      font-size: 1.25rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .navbar-brand i {
-      color: var(--bs-primary, #0d6efd);
-    }
-
-    .navbar,
-    footer,
-    #sidebar,
-    #content-area {
-      background-color: var(--header-bg);
-    }
-
-    .btn-sm {
-      min-height: 38px;
-      padding: 0.375rem 0.75rem;
-    }
-
-    @media (min-width: 576px) {
-      .btn-md-normal {
-        padding: 0.5rem 1rem;
-        font-size: 1rem;
-      }
-    }
-
-    .sans-serif-title {
-      font-family: Arial, Helvetica, sans-serif;
+      transition: background-color .2s, color .2s;
     }
 
     #sidebar {
@@ -111,1565 +57,123 @@
       transition: transform 0.3s;
     }
 
-
-    .favorite-card {
-      width: 18rem;
-      border-radius: 15px;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      border: 2px solid #ff4d4d;
-      /* Red accent border */
-      background-color: #fff;
-      transition: transform 0.3s, box-shadow 0.3s;
-      margin-left: 4px;
-    }
-
-    .favorite-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    .favorite-card img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      display: block;
-      border-top-left-radius: 15px;
-      border-top-right-radius: 15px;
-    }
-
-
-    .card-body:hover {
-      transform: scale(1.05);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    .card-body {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
-    }
-
-    #title {
-      font-family: Arial, Helvetica, sans-serif;
-      font-weight: bold;
-      font-size: 1.2rem;
-      color: #e60000;
-      margin: 0 0 10px 0;
-    }
-
-    #author {
-      font-family: Lato, sans-serif;
-      font-size: 0.95rem;
-      color: #555;
-      margin: 0 0 10px 0;
-    }
-
-    #year {
-      font-family: 'Open Sans', sans-serif;
-      font-size: 0.9rem;
-      color: #777;
-      margin: 0;
-    }
-
-    .favorite-star {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      font-size: 1.5rem;
-      color: #ffcc00;
-      cursor: pointer;
-      transition: color 0.3s;
-    }
-
-    .favorite-star:hover {
-      color: #ff9900;
-    }
-
-
-    .footer_page {
-      margin-left: 72px;
-    }
-
-    #login_button #register {
-      min-height: 44px;
-    }
-
-
-    .author-font {
-      font-family: 'Lato', sans-serif;
+    .app-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      /* FIX: removed the stray extra 58px margin that used to double up with this
+         wrapper's own 250px margin (the old `.page{margin-left:58px}` rule is gone). */
+      margin-left: 250px;
     }
 
     #content-area {
       flex: 1;
-      padding: 20px;
+      padding: 24px;
     }
 
     .header {
       background-color: var(--header-bg);
       padding: 20px;
       text-align: center;
-      color: var(--text-color);
-      z-index: 1;
-      position: relative;
     }
 
-    .navbar.sticky-top {
-      z-index: 1020;
+    .navbar, footer {
+      background-color: var(--header-bg) !important;
     }
 
-    footer {
-      position: relative;
-      z-index: 1;
+    .book-card, .card {
+      background-color: var(--card-bg);
+      color: var(--card-text);
     }
 
-    #theme-toggle {
-      margin-left: auto;
-    }
-
-    @media (max-width: 991.98px) {
-      #sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease-in-out;
-      }
-
-      #sidebar.show {
-        transform: translateX(0);
-      }
-
-      div[style*="margin-left:250px"] {
-        margin-left: 0 !important;
-      }
-
-      .btn-sm {
-        min-height: 38px;
-        padding: 0.375rem 0.75rem;
-      }
-
-      @media (min-width: 576px) {
-        .btn-md-normal {
-          padding: 0.5rem 1rem;
-          font-size: 1rem;
-        }
-      }
-
-
-
-      @media (min-width: 992px) {
-        #sidebarToggle {
-          padding: 0.4rem 0.6rem;
-          border-radius: 0.375rem;
-        }
-      }
-    }
-  </style>
-  <style>
-    *,
-    *:before,
-    *:after {
-      box-sizing: border-box
-    }
-
-    body {
-      height: 100dvh
-    }
-
-    :root {
-      --bs-blue: #0d6efd;
-      --bs-indigo: #6610f2;
-      --bs-purple: #6f42c1;
-      --bs-pink: #d63384;
-      --bs-red: #dc3545;
-      --bs-orange: #fd7e14;
-      --bs-yellow: #ffc107;
-      --bs-green: #198754;
-      --bs-teal: #20c997;
-      --bs-cyan: #0dcaf0;
-      --bs-black: #000;
-      --bs-white: #fff;
-      --bs-gray: #6c757d;
-      --bs-gray-dark: #343a40;
-      --bs-gray-100: #f8f9fa;
-      --bs-gray-200: #e9ecef;
-      --bs-gray-300: #dee2e6;
-      --bs-gray-400: #ced4da;
-      --bs-gray-500: #adb5bd;
-      --bs-gray-600: #6c757d;
-      --bs-gray-700: #495057;
-      --bs-gray-800: #343a40;
-      --bs-gray-900: #212529;
-      --bs-primary: #0d6efd;
-      --bs-secondary: #6c757d;
-      --bs-success: #198754;
-      --bs-info: #0dcaf0;
-      --bs-warning: #ffc107;
-      --bs-danger: #dc3545;
-      --bs-light: #f8f9fa;
-      --bs-dark: #212529;
-      --bs-primary-rgb: 13, 110, 253;
-      --bs-secondary-rgb: 108, 117, 125;
-      --bs-success-rgb: 25, 135, 84;
-      --bs-info-rgb: 13, 202, 240;
-      --bs-warning-rgb: 255, 193, 7;
-      --bs-danger-rgb: 220, 53, 69;
-      --bs-light-rgb: 248, 249, 250;
-      --bs-dark-rgb: 33, 37, 41;
-      --bs-primary-text-emphasis: #052c65;
-      --bs-secondary-text-emphasis: #2b2f32;
-      --bs-success-text-emphasis: #0a3622;
-      --bs-info-text-emphasis: #055160;
-      --bs-warning-text-emphasis: #664d03;
-      --bs-danger-text-emphasis: #58151c;
-      --bs-light-text-emphasis: #495057;
-      --bs-dark-text-emphasis: #495057;
-      --bs-primary-bg-subtle: #cfe2ff;
-      --bs-secondary-bg-subtle: #e2e3e5;
-      --bs-success-bg-subtle: #d1e7dd;
-      --bs-info-bg-subtle: #cff4fc;
-      --bs-warning-bg-subtle: #fff3cd;
-      --bs-danger-bg-subtle: #f8d7da;
-      --bs-light-bg-subtle: #fcfcfd;
-      --bs-dark-bg-subtle: #ced4da;
-      --bs-primary-border-subtle: #9ec5fe;
-      --bs-secondary-border-subtle: #c4c8cb;
-      --bs-success-border-subtle: #a3cfbb;
-      --bs-info-border-subtle: #9eeaf9;
-      --bs-warning-border-subtle: #ffe69c;
-      --bs-danger-border-subtle: #f1aeb5;
-      --bs-light-border-subtle: #e9ecef;
-      --bs-dark-border-subtle: #adb5bd;
-      --bs-white-rgb: 255, 255, 255;
-      --bs-black-rgb: 0, 0, 0;
-      --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-      --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, 0));
-      --bs-body-font-family: var(--bs-font-sans-serif);
-      --bs-body-font-size: 1rem;
-      --bs-body-font-weight: 400;
-      --bs-body-line-height: 1.5;
-      --bs-body-color: #212529;
-      --bs-body-color-rgb: 33, 37, 41;
-      --bs-body-bg: #fff;
-      --bs-body-bg-rgb: 255, 255, 255;
-      --bs-emphasis-color: #000;
-      --bs-emphasis-color-rgb: 0, 0, 0;
-      --bs-secondary-color: rgba(33, 37, 41, .75);
-      --bs-secondary-color-rgb: 33, 37, 41;
-      --bs-secondary-bg: #e9ecef;
-      --bs-secondary-bg-rgb: 233, 236, 239;
-      --bs-tertiary-color: rgba(33, 37, 41, .5);
-      --bs-tertiary-color-rgb: 33, 37, 41;
-      --bs-tertiary-bg: #f8f9fa;
-      --bs-tertiary-bg-rgb: 248, 249, 250;
-      --bs-heading-color: inherit;
-      --bs-link-color: #0d6efd;
-      --bs-link-color-rgb: 13, 110, 253;
-      --bs-link-decoration: underline;
-      --bs-link-hover-color: #0a58ca;
-      --bs-link-hover-color-rgb: 10, 88, 202;
-      --bs-code-color: #d63384;
-      --bs-highlight-color: #212529;
-      --bs-highlight-bg: #fff3cd;
-      --bs-border-width: 1px;
-      --bs-border-style: solid;
-      --bs-border-color: #dee2e6;
-      --bs-border-color-translucent: rgba(0, 0, 0, .175);
-      --bs-border-radius: .375rem;
-      --bs-border-radius-sm: .25rem;
-      --bs-border-radius-lg: .5rem;
-      --bs-border-radius-xl: 1rem;
-      --bs-border-radius-xxl: 2rem;
-      --bs-border-radius-2xl: var(--bs-border-radius-xxl);
-      --bs-border-radius-pill: 50rem;
-      --bs-box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
-      --bs-box-shadow-sm: 0 .125rem .25rem rgba(0, 0, 0, .075);
-      --bs-box-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, .175);
-      --bs-box-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, .075);
-      --bs-focus-ring-width: .25rem;
-      --bs-focus-ring-opacity: .25;
-      --bs-focus-ring-color: rgba(13, 110, 253, .25);
-      --bs-form-valid-color: #198754;
-      --bs-form-valid-border-color: #198754;
-      --bs-form-invalid-color: #dc3545;
-      --bs-form-invalid-border-color: #dc3545
-    }
-
-    *,
-    :after,
-    :before {
-      box-sizing: border-box
-    }
-
-    @media(prefers-reduced-motion:no-preference) {
-      :root {
-        scroll-behavior: smooth
-      }
-    }
-
-    body {
-      margin: 0;
-      font-family: var(--bs-body-font-family);
-      font-size: var(--bs-body-font-size);
-      font-weight: var(--bs-body-font-weight);
-      line-height: var(--bs-body-line-height);
-      color: var(--bs-body-color);
-      text-align: var(--bs-body-text-align);
-      background-color: var(--bs-body-bg);
-      -webkit-text-size-adjust: 100%;
-      -webkit-tap-highlight-color: transparent
-    }
-
-    hr {
-      margin: 1rem 0;
-      color: inherit;
-      border: 0;
-      border-top: var(--bs-border-width) solid;
-      opacity: .25
-    }
-
-    h1,
-    h2,
-    h4,
-    h5,
-    h6 {
-      margin-top: 0;
-      margin-bottom: .5rem;
-      font-weight: 500;
-      line-height: 1.2;
-      color: var(--bs-heading-color)
-    }
-
-    h1 {
-      font-size: calc(1.375rem + 1.5vw)
-    }
-
-    @media(min-width:1200px) {
-      h1 {
-        font-size: 2.5rem
-      }
-    }
-
-    h2 {
-      font-size: calc(1.325rem + .9vw)
-    }
-
-    @media(min-width:1200px) {
-      h2 {
-        font-size: 2rem
-      }
-    }
-
-    h4 {
-      font-size: calc(1.275rem + .3vw)
-    }
-
-    @media(min-width:1200px) {
-      h4 {
-        font-size: 1.5rem
-      }
-    }
-
-    h5 {
-      font-size: 1.25rem
-    }
-
-    h6 {
-      font-size: 1rem
-    }
-
-    p {
-      margin-top: 0;
-      margin-bottom: 1rem
-    }
-
-    ul {
-      padding-left: 2rem
-    }
-
-    ul {
-      margin-top: 0;
-      margin-bottom: 1rem
-    }
-
-    blockquote {
-      margin: 0 0 1rem
-    }
-
-    a {
-      color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
-      text-decoration: underline
-    }
-
-    a:hover {
-      --bs-link-color-rgb: var(--bs-link-hover-color-rgb)
-    }
-
-    a:not([href]):not([class]),
-    a:not([href]):not([class]):hover {
-      color: inherit;
-      text-decoration: none
-    }
-
-    img {
-      vertical-align: middle
-    }
-
-    label {
-      display: inline-block
-    }
-
-    button {
-      border-radius: 0
-    }
-
-    button:focus:not(:focus-visible) {
-      outline: 0
-    }
-
-    button,
-    input,
-    textarea {
-      margin: 0;
-      font-family: inherit;
-      font-size: inherit;
-      line-height: inherit
-    }
-
-    button {
-      text-transform: none
-    }
-
-    [type=button],
-    [type=submit],
-    button {
-      -webkit-appearance: button
-    }
-
-    [type=button]:not(:disabled),
-    [type=submit]:not(:disabled),
-    button:not(:disabled) {
-      cursor: pointer
-    }
-
-    textarea {
-      resize: vertical
-    }
-
-    .blockquote {
-      margin-bottom: 1rem;
-      font-size: 1.25rem
-    }
-
-    .blockquote>:last-child {
-      margin-bottom: 0
-    }
-
-    .blockquote-footer {
-      margin-top: -1rem;
-      margin-bottom: 1rem;
-      font-size: .875em;
-      color: #6c757d
-    }
-
-    .blockquote-footer:before {
-      content: "\2014\a0"
-    }
-
-    .container {
-      --bs-gutter-x: 1.5rem;
-      --bs-gutter-y: 0;
-      width: 100%;
-      padding-right: calc(var(--bs-gutter-x) * .5);
-      padding-left: calc(var(--bs-gutter-x) * .5);
-      margin-right: auto;
-      margin-left: auto
-    }
-
-    @media(min-width:576px) {
-      .container {
-        max-width: 540px
-      }
-    }
-
-    @media(min-width:768px) {
-      .container {
-        max-width: 720px
-      }
-    }
-
-    @media(min-width:992px) {
-      .container {
-        max-width: 960px
-      }
-    }
-
-    @media(min-width:1200px) {
-      .container {
-        max-width: 1140px
-      }
-    }
-
-    @media(min-width:1400px) {
-      .container {
-        max-width: 1320px
-      }
-    }
-
-    :root {
-      --bs-breakpoint-xs: 0;
-      --bs-breakpoint-sm: 576px;
-      --bs-breakpoint-md: 768px;
-      --bs-breakpoint-lg: 992px;
-      --bs-breakpoint-xl: 1200px;
-      --bs-breakpoint-xxl: 1400px
-    }
-
-    .row {
-      --bs-gutter-x: 1.5rem;
-      --bs-gutter-y: 0;
-      display: flex;
-      flex-wrap: wrap;
-      margin-top: calc(-1 * var(--bs-gutter-y));
-      margin-right: calc(-.5 * var(--bs-gutter-x));
-      margin-left: calc(-.5 * var(--bs-gutter-x))
-    }
-
-    .row>* {
-      flex-shrink: 0;
-      width: 100%;
-      max-width: 100%;
-      padding-right: calc(var(--bs-gutter-x) * .5);
-      padding-left: calc(var(--bs-gutter-x) * .5);
-      margin-top: var(--bs-gutter-y)
-    }
-
-    .col {
-      flex: 1 0 0
-    }
-
-    .col-auto {
-      flex: 0 0 auto;
-      width: auto
-    }
-
-    .col-10 {
-      flex: 0 0 auto;
-      width: 83.33333333%
-    }
-
-    @media(min-width:576px) {
-      .col-sm {
-        flex: 1 0 0
-      }
-
-      .col-sm-8 {
-        flex: 0 0 auto;
-        width: 66.66666667%
-      }
-    }
-
-    @media(min-width:768px) {
-      .col-md-6 {
-        flex: 0 0 auto;
-        width: 50%
-      }
-    }
-
-    .form-label {
-      margin-bottom: .5rem
-    }
-
-    .form-control {
-      display: block;
-      width: 100%;
-      padding: .375rem .75rem;
-      font-size: 1rem;
-      font-weight: 400;
-      line-height: 1.5;
-      color: var(--bs-body-color);
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-      background-color: var(--bs-body-bg);
-      background-clip: padding-box;
-      border: var(--bs-border-width) solid var(--bs-border-color);
-      border-radius: var(--bs-border-radius);
-      transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out
-    }
-
-    @media(prefers-reduced-motion:reduce) {
-      .form-control {
-        transition: none
-      }
-    }
-
-    .form-control:focus {
-      color: var(--bs-body-color);
-      background-color: var(--bs-body-bg);
-      border-color: #86b7fe;
-      outline: 0;
-      box-shadow: 0 0 0 .25rem #0d6efd40
-    }
-
-    .form-control::-webkit-date-and-time-value {
-      min-width: 85px;
-      height: 1.5em;
-      margin: 0
-    }
-
-    .form-control::-webkit-datetime-edit {
-      display: block;
-      padding: 0
-    }
-
-    .form-control::placeholder {
-      color: var(--bs-secondary-color);
-      opacity: 1
-    }
-
-    .form-control:disabled {
-      background-color: var(--bs-secondary-bg);
-      opacity: 1
-    }
-
-    .form-control::-webkit-file-upload-button {
-      padding: .375rem .75rem;
-      margin: -.375rem -.75rem;
-      -webkit-margin-end: .75rem;
-      margin-inline-end: .75rem;
-      color: var(--bs-body-color);
-      background-color: var(--bs-tertiary-bg);
-      pointer-events: none;
-      border-color: inherit;
-      border-style: solid;
-      border-width: 0;
-      border-inline-end-width: var(--bs-border-width);
-      border-radius: 0;
-      -webkit-transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-      transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out
-    }
-
-    .form-control::file-selector-button {
-      padding: .375rem .75rem;
-      margin: -.375rem -.75rem;
-      -webkit-margin-end: .75rem;
-      margin-inline-end: .75rem;
-      color: var(--bs-body-color);
-      background-color: var(--bs-tertiary-bg);
-      pointer-events: none;
-      border-color: inherit;
-      border-style: solid;
-      border-width: 0;
-      border-inline-end-width: var(--bs-border-width);
-      border-radius: 0;
-      transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out
-    }
-
-    @media(prefers-reduced-motion:reduce) {
-      .form-control::-webkit-file-upload-button {
-        -webkit-transition: none;
-        transition: none
-      }
-
-      .form-control::file-selector-button {
-        transition: none
-      }
-    }
-
-    .form-control:hover:not(:disabled):not([readonly])::-webkit-file-upload-button {
-      background-color: var(--bs-secondary-bg)
-    }
-
-    .form-control:hover:not(:disabled):not([readonly])::file-selector-button {
-      background-color: var(--bs-secondary-bg)
-    }
-
-    textarea.form-control {
-      min-height: calc(1.5em + .75rem + calc(var(--bs-border-width) * 2))
-    }
-
-    .btn {
-      --bs-btn-padding-x: .75rem;
-      --bs-btn-padding-y: .375rem;
-      --bs-btn-font-family: ;
-      --bs-btn-font-size: 1rem;
-      --bs-btn-font-weight: 400;
-      --bs-btn-line-height: 1.5;
-      --bs-btn-color: var(--bs-body-color);
-      --bs-btn-bg: transparent;
-      --bs-btn-border-width: var(--bs-border-width);
-      --bs-btn-border-color: transparent;
-      --bs-btn-border-radius: var(--bs-border-radius);
-      --bs-btn-hover-border-color: transparent;
-      --bs-btn-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(0, 0, 0, .075);
-      --bs-btn-disabled-opacity: .65;
-      --bs-btn-focus-box-shadow: 0 0 0 .25rem rgba(var(--bs-btn-focus-shadow-rgb), .5);
-      display: inline-block;
-      padding: var(--bs-btn-padding-y) var(--bs-btn-padding-x);
-      font-family: var(--bs-btn-font-family);
-      font-size: var(--bs-btn-font-size);
-      font-weight: var(--bs-btn-font-weight);
-      line-height: var(--bs-btn-line-height);
-      color: var(--bs-btn-color);
-      text-align: center;
-      text-decoration: none;
-      vertical-align: middle;
-      cursor: pointer;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      user-select: none;
-      border: var(--bs-btn-border-width) solid var(--bs-btn-border-color);
-      border-radius: var(--bs-btn-border-radius);
-      background-color: var(--bs-btn-bg);
-      transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out
-    }
-
-    @media(prefers-reduced-motion:reduce) {
-      .btn {
-        transition: none
-      }
-    }
-
-    .btn:hover {
-      color: var(--bs-btn-hover-color);
-      background-color: var(--bs-btn-hover-bg);
-      border-color: var(--bs-btn-hover-border-color)
-    }
-
-    .btn:focus-visible {
-      color: var(--bs-btn-hover-color);
-      background-color: var(--bs-btn-hover-bg);
-      border-color: var(--bs-btn-hover-border-color);
-      outline: 0;
-      box-shadow: var(--bs-btn-focus-box-shadow)
-    }
-
-    .btn:first-child:active {
-      color: var(--bs-btn-active-color);
-      background-color: var(--bs-btn-active-bg);
-      border-color: var(--bs-btn-active-border-color)
-    }
-
-    .btn:first-child:active:focus-visible {
-      box-shadow: var(--bs-btn-focus-box-shadow)
-    }
-
-    .btn:disabled {
-      color: var(--bs-btn-disabled-color);
-      pointer-events: none;
-      background-color: var(--bs-btn-disabled-bg);
-      border-color: var(--bs-btn-disabled-border-color);
-      opacity: var(--bs-btn-disabled-opacity)
-    }
-
-    .btn-primary {
-      --bs-btn-color: #fff;
-      --bs-btn-bg: #0d6efd;
-      --bs-btn-border-color: #0d6efd;
-      --bs-btn-hover-color: #fff;
-      --bs-btn-hover-bg: #0b5ed7;
-      --bs-btn-hover-border-color: #0a58ca;
-      --bs-btn-focus-shadow-rgb: 49, 132, 253;
-      --bs-btn-active-color: #fff;
-      --bs-btn-active-bg: #0a58ca;
-      --bs-btn-active-border-color: #0a53be;
-      --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
-      --bs-btn-disabled-color: #fff;
-      --bs-btn-disabled-bg: #0d6efd;
-      --bs-btn-disabled-border-color: #0d6efd
-    }
-
-    .btn-success {
-      --bs-btn-color: #fff;
-      --bs-btn-bg: #198754;
-      --bs-btn-border-color: #198754;
-      --bs-btn-hover-color: #fff;
-      --bs-btn-hover-bg: #157347;
-      --bs-btn-hover-border-color: #146c43;
-      --bs-btn-focus-shadow-rgb: 60, 153, 110;
-      --bs-btn-active-color: #fff;
-      --bs-btn-active-bg: #146c43;
-      --bs-btn-active-border-color: #13653f;
-      --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
-      --bs-btn-disabled-color: #fff;
-      --bs-btn-disabled-bg: #198754;
-      --bs-btn-disabled-border-color: #198754
-    }
-
-    .btn-outline-secondary {
-      --bs-btn-color: #6c757d;
-      --bs-btn-border-color: #6c757d;
-      --bs-btn-hover-color: #fff;
-      --bs-btn-hover-bg: #6c757d;
-      --bs-btn-hover-border-color: #6c757d;
-      --bs-btn-focus-shadow-rgb: 108, 117, 125;
-      --bs-btn-active-color: #fff;
-      --bs-btn-active-bg: #6c757d;
-      --bs-btn-active-border-color: #6c757d;
-      --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
-      --bs-btn-disabled-color: #6c757d;
-      --bs-btn-disabled-bg: transparent;
-      --bs-btn-disabled-border-color: #6c757d;
-      --bs-gradient: none
-    }
-
-    .btn-lg {
-      --bs-btn-padding-y: .5rem;
-      --bs-btn-padding-x: 1rem;
-      --bs-btn-font-size: 1.25rem;
-      --bs-btn-border-radius: var(--bs-border-radius-lg)
-    }
-
-    .fade {
-      transition: opacity .15s linear
-    }
-
-    @media(prefers-reduced-motion:reduce) {
-      .fade {
-        transition: none
-      }
-    }
-
-    .fade:not(.show) {
-      opacity: 0
-    }
-
-    .nav {
-      --bs-nav-link-padding-x: 1rem;
-      --bs-nav-link-padding-y: .5rem;
-      --bs-nav-link-font-weight: ;
-      --bs-nav-link-color: var(--bs-link-color);
-      --bs-nav-link-hover-color: var(--bs-link-hover-color);
-      --bs-nav-link-disabled-color: var(--bs-secondary-color);
-      display: flex;
-      flex-wrap: wrap;
-      padding-left: 0;
-      margin-bottom: 0;
-      list-style: none
-    }
-
-    .nav-link {
-      display: block;
-      padding: var(--bs-nav-link-padding-y) var(--bs-nav-link-padding-x);
-      font-size: var(--bs-nav-link-font-size);
-      font-weight: var(--bs-nav-link-font-weight);
-      color: var(--bs-nav-link-color);
-      text-decoration: none;
-      background: 0 0;
-      border: 0;
-      transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out
-    }
-
-    @media(prefers-reduced-motion:reduce) {
-      .nav-link {
-        transition: none
-      }
-    }
-
-    .nav-link:focus,
-    .nav-link:hover {
-      color: var(--bs-nav-link-hover-color)
-    }
-
-    .nav-link:focus-visible {
-      outline: 0;
-      box-shadow: 0 0 0 .25rem #0d6efd40
-    }
-
-    .nav-link:disabled {
-      color: var(--bs-nav-link-disabled-color);
-      pointer-events: none;
-      cursor: default
-    }
-
-    .nav-pills {
-      --bs-nav-pills-border-radius: var(--bs-border-radius);
-      --bs-nav-pills-link-active-color: #fff;
-      --bs-nav-pills-link-active-bg: #0d6efd
-    }
-
-    .nav-pills .nav-link {
-      border-radius: var(--bs-nav-pills-border-radius)
-    }
-
-    .nav-pills .nav-link.active {
-      color: var(--bs-nav-pills-link-active-color);
-      background-color: var(--bs-nav-pills-link-active-bg)
-    }
-
-    .navbar {
-      --bs-navbar-padding-x: 0;
-      --bs-navbar-padding-y: .5rem;
-      --bs-navbar-color: rgba(var(--bs-emphasis-color-rgb), .65);
-      --bs-navbar-hover-color: rgba(var(--bs-emphasis-color-rgb), .8);
-      --bs-navbar-disabled-color: rgba(var(--bs-emphasis-color-rgb), .3);
-      --bs-navbar-active-color: rgba(var(--bs-emphasis-color-rgb), 1);
-      --bs-navbar-brand-padding-y: .3125rem;
-      --bs-navbar-brand-margin-end: 1rem;
-      --bs-navbar-brand-font-size: 1.25rem;
-      --bs-navbar-brand-color: rgba(var(--bs-emphasis-color-rgb), 1);
-      --bs-navbar-brand-hover-color: rgba(var(--bs-emphasis-color-rgb), 1);
-      --bs-navbar-nav-link-padding-x: .5rem;
-      --bs-navbar-toggler-padding-y: .25rem;
-      --bs-navbar-toggler-padding-x: .75rem;
-      --bs-navbar-toggler-font-size: 1.25rem;
-      --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-      --bs-navbar-toggler-border-color: rgba(var(--bs-emphasis-color-rgb), .15);
-      --bs-navbar-toggler-border-radius: var(--bs-border-radius);
-      --bs-navbar-toggler-focus-width: .25rem;
-      --bs-navbar-toggler-transition: box-shadow .15s ease-in-out;
-      position: relative;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      padding: var(--bs-navbar-padding-y) var(--bs-navbar-padding-x)
-    }
-
-    .navbar>.container {
-      display: flex;
-      flex-wrap: inherit;
-      align-items: center;
-      justify-content: space-between
-    }
-
-    .navbar-brand {
-      padding-top: var(--bs-navbar-brand-padding-y);
-      padding-bottom: var(--bs-navbar-brand-padding-y);
-      margin-right: var(--bs-navbar-brand-margin-end);
-      font-size: var(--bs-navbar-brand-font-size);
-      color: var(--bs-navbar-brand-color);
-      text-decoration: none;
-      white-space: nowrap
-    }
-
-    .navbar-brand:focus,
-    .navbar-brand:hover {
-      color: var(--bs-navbar-brand-hover-color)
-    }
-
-    .navbar-toggler-icon {
-      display: inline-block;
-      width: 1.5em;
-      height: 1.5em;
-      vertical-align: middle;
-      background-image: var(--bs-navbar-toggler-icon-bg);
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 100%
-    }
-
-    .card {
-      --bs-card-spacer-y: 1rem;
-      --bs-card-spacer-x: 1rem;
-      --bs-card-title-spacer-y: .5rem;
-      --bs-card-title-color: ;
-      --bs-card-subtitle-color: ;
-      --bs-card-border-width: var(--bs-border-width);
-      --bs-card-border-color: var(--bs-border-color-translucent);
-      --bs-card-border-radius: var(--bs-border-radius);
-      --bs-card-box-shadow: ;
-      --bs-card-inner-border-radius: calc(var(--bs-border-radius) - (var(--bs-border-width)));
-      --bs-card-cap-padding-y: .5rem;
-      --bs-card-cap-padding-x: 1rem;
-      --bs-card-cap-bg: rgba(var(--bs-body-color-rgb), .03);
-      --bs-card-cap-color: ;
-      --bs-card-height: ;
-      --bs-card-color: ;
-      --bs-card-bg: var(--bs-body-bg);
-      --bs-card-img-overlay-padding: 1rem;
-      --bs-card-group-margin: .75rem;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-      height: var(--bs-card-height);
-      color: var(--bs-body-color);
-      word-wrap: break-word;
-      background-color: var(--bs-card-bg);
-      background-clip: border-box;
-      border: var(--bs-card-border-width) solid var(--bs-card-border-color);
-      border-radius: var(--bs-card-border-radius)
-    }
-
-    .card-body {
-      flex: 1 1 auto;
-      padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
-      color: var(--bs-card-color)
-    }
-
-    .alert {
-      --bs-alert-bg: transparent;
-      --bs-alert-padding-x: 1rem;
-      --bs-alert-padding-y: 1rem;
-      --bs-alert-margin-bottom: 1rem;
-      --bs-alert-color: inherit;
-      --bs-alert-border-color: transparent;
-      --bs-alert-border: var(--bs-border-width) solid var(--bs-alert-border-color);
-      --bs-alert-border-radius: var(--bs-border-radius);
-      --bs-alert-link-color: inherit;
-      position: relative;
-      padding: var(--bs-alert-padding-y) var(--bs-alert-padding-x);
-      margin-bottom: var(--bs-alert-margin-bottom);
-      color: var(--bs-alert-color);
-      background-color: var(--bs-alert-bg);
-      border: var(--bs-alert-border);
-      border-radius: var(--bs-alert-border-radius)
-    }
-
-    .alert-heading {
-      color: inherit
-    }
-
-    .alert-success {
-      --bs-alert-color: var(--bs-success-text-emphasis);
-      --bs-alert-bg: var(--bs-success-bg-subtle);
-      --bs-alert-border-color: var(--bs-success-border-subtle);
-      --bs-alert-link-color: var(--bs-success-text-emphasis)
-    }
-
-    .alert-warning {
-      --bs-alert-color: var(--bs-warning-text-emphasis);
-      --bs-alert-bg: var(--bs-warning-bg-subtle);
-      --bs-alert-border-color: var(--bs-warning-border-subtle);
-      --bs-alert-link-color: var(--bs-warning-text-emphasis)
-    }
-
-    .list-group {
-      --bs-list-group-color: var(--bs-body-color);
-      --bs-list-group-bg: var(--bs-body-bg);
-      --bs-list-group-border-color: var(--bs-border-color);
-      --bs-list-group-border-width: var(--bs-border-width);
-      --bs-list-group-border-radius: var(--bs-border-radius);
-      --bs-list-group-item-padding-x: 1rem;
-      --bs-list-group-item-padding-y: .5rem;
-      --bs-list-group-action-color: var(--bs-secondary-color);
-      --bs-list-group-action-hover-color: var(--bs-emphasis-color);
-      --bs-list-group-action-hover-bg: var(--bs-tertiary-bg);
-      --bs-list-group-action-active-color: var(--bs-body-color);
-      --bs-list-group-action-active-bg: var(--bs-secondary-bg);
-      --bs-list-group-disabled-color: var(--bs-secondary-color);
-      --bs-list-group-disabled-bg: var(--bs-body-bg);
-      --bs-list-group-active-color: #fff;
-      --bs-list-group-active-bg: #0d6efd;
-      --bs-list-group-active-border-color: #0d6efd;
-      display: flex;
-      flex-direction: column;
-      padding-left: 0;
-      margin-bottom: 0;
-      border-radius: var(--bs-list-group-border-radius)
-    }
-
-    .list-group-item {
-      position: relative;
-      display: block;
-      padding: var(--bs-list-group-item-padding-y) var(--bs-list-group-item-padding-x);
-      color: var(--bs-list-group-color);
-      text-decoration: none;
-      background-color: var(--bs-list-group-bg);
-      border: var(--bs-list-group-border-width) solid var(--bs-list-group-border-color)
-    }
-
-    .list-group-item:first-child {
-      border-top-left-radius: inherit;
-      border-top-right-radius: inherit
-    }
-
-    .list-group-item:last-child {
-      border-bottom-right-radius: inherit;
-      border-bottom-left-radius: inherit
-    }
-
-    .list-group-item:disabled {
-      color: var(--bs-list-group-disabled-color);
-      pointer-events: none;
-      background-color: var(--bs-list-group-disabled-bg)
-    }
-
-    .list-group-item+.list-group-item {
-      border-top-width: 0
-    }
-
-    .btn-close {
-      --bs-btn-close-color: #000;
-      --bs-btn-close-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414'/%3e%3c/svg%3e");
-      --bs-btn-close-opacity: .5;
-      --bs-btn-close-hover-opacity: .75;
-      --bs-btn-close-focus-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
-      --bs-btn-close-focus-opacity: 1;
-      --bs-btn-close-disabled-opacity: .25;
-      box-sizing: content-box;
-      width: 1em;
-      height: 1em;
-      padding: .25em;
-      color: var(--bs-btn-close-color);
-      background: transparent var(--bs-btn-close-bg) center/1em auto no-repeat;
-      filter: var(--bs-btn-close-filter);
-      border: 0;
-      border-radius: .375rem;
-      opacity: var(--bs-btn-close-opacity)
-    }
-
-    .btn-close:hover {
-      color: var(--bs-btn-close-color);
-      text-decoration: none;
-      opacity: var(--bs-btn-close-hover-opacity)
-    }
-
-    .btn-close:focus {
-      outline: 0;
-      box-shadow: var(--bs-btn-close-focus-shadow);
-      opacity: var(--bs-btn-close-focus-opacity)
-    }
-
-    .btn-close:disabled {
-      pointer-events: none;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      user-select: none;
-      opacity: var(--bs-btn-close-disabled-opacity)
-    }
-
-    :root {
-      --bs-btn-close-filter:
-    }
-
-    .modal {
-      --bs-modal-zindex: 1055;
-      --bs-modal-width: 500px;
-      --bs-modal-padding: 1rem;
-      --bs-modal-margin: .5rem;
-      --bs-modal-color: var(--bs-body-color);
-      --bs-modal-bg: var(--bs-body-bg);
-      --bs-modal-border-color: var(--bs-border-color-translucent);
-      --bs-modal-border-width: var(--bs-border-width);
-      --bs-modal-border-radius: var(--bs-border-radius-lg);
-      --bs-modal-box-shadow: var(--bs-box-shadow-sm);
-      --bs-modal-inner-border-radius: calc(var(--bs-border-radius-lg) - (var(--bs-border-width)));
-      --bs-modal-header-padding-x: 1rem;
-      --bs-modal-header-padding-y: 1rem;
-      --bs-modal-header-padding: 1rem 1rem;
-      --bs-modal-header-border-color: var(--bs-border-color);
-      --bs-modal-header-border-width: var(--bs-border-width);
-      --bs-modal-title-line-height: 1.5;
-      --bs-modal-footer-gap: .5rem;
-      --bs-modal-footer-bg: ;
-      --bs-modal-footer-border-color: var(--bs-border-color);
-      --bs-modal-footer-border-width: var(--bs-border-width);
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: var(--bs-modal-zindex);
-      display: none;
-      width: 100%;
-      height: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
-      outline: 0
-    }
-
-    .modal-dialog {
-      position: relative;
-      width: auto;
-      margin: var(--bs-modal-margin);
-      pointer-events: none
-    }
-
-    .modal.fade .modal-dialog {
-      transform: translateY(-50px);
-      transition: transform .3s ease-out
-    }
-
-    @media(prefers-reduced-motion:reduce) {
-      .modal.fade .modal-dialog {
-        transition: none
-      }
+    .book-card .text-muted, .card .text-muted {
+      color: var(--card-muted) !important;
     }
 
     .modal-content {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      color: var(--bs-modal-color);
-      pointer-events: auto;
-      background-color: var(--bs-modal-bg);
-      background-clip: padding-box;
-      border: var(--bs-modal-border-width) solid var(--bs-modal-border-color);
-      border-radius: var(--bs-modal-border-radius);
-      outline: 0
+      background-color: var(--card-bg);
+      color: var(--card-text);
     }
 
-    .modal-header {
-      display: flex;
-      flex-shrink: 0;
-      align-items: center;
-      padding: var(--bs-modal-header-padding);
-      border-bottom: var(--bs-modal-header-border-width) solid var(--bs-modal-header-border-color);
-      border-top-left-radius: var(--bs-modal-inner-border-radius);
-      border-top-right-radius: var(--bs-modal-inner-border-radius)
+    @media (max-width: 991.98px) {
+      #sidebar { transform: translateX(-100%); }
+      #sidebar.show { transform: translateX(0); }
+      .app-body { margin-left: 0; }
     }
 
-    .modal-header .btn-close {
-      padding: calc(var(--bs-modal-header-padding-y) * .5) calc(var(--bs-modal-header-padding-x) * .5);
-      margin-top: calc(-.5 * var(--bs-modal-header-padding-y));
-      margin-right: calc(-.5 * var(--bs-modal-header-padding-x));
-      margin-bottom: calc(-.5 * var(--bs-modal-header-padding-y));
-      margin-left: auto
-    }
+    .page { display: none; }
+    .page.active { display: block; }
 
-    .modal-title {
-      margin-bottom: 0;
-      line-height: var(--bs-modal-title-line-height)
-    }
-
-    .modal-body {
-      position: relative;
-      flex: 1 1 auto;
-      padding: var(--bs-modal-padding)
-    }
-
-    @media(min-width:576px) {
-      .modal {
-        --bs-modal-margin: 1.75rem;
-        --bs-modal-box-shadow: var(--bs-box-shadow)
-      }
-
-      .modal-dialog {
-        max-width: var(--bs-modal-width);
-        margin-right: auto;
-        margin-left: auto
-      }
-    }
-
-    :root {
-      --bs-carousel-indicator-active-bg: #fff;
-      --bs-carousel-caption-color: #fff;
-      --bs-carousel-control-icon-filter:
-    }
-
-    .sticky-top {
-      position: -webkit-sticky;
-      position: sticky;
-      top: 0;
-      z-index: 1020
-    }
-
-    .d-block {
-      display: block !important
-    }
-
-    .d-flex {
-      display: flex !important
-    }
-
-    .d-none {
-      display: none !important
-    }
-
-    .position-fixed {
-      position: fixed !important
-    }
-
-    .w-100 {
-      width: 100% !important
-    }
-
-    .flex-fill {
-      flex: 1 1 auto !important
-    }
-
-    .flex-column {
-      flex-direction: column !important
-    }
-
-    .flex-wrap {
-      flex-wrap: wrap !important
-    }
-
-    .justify-content-end {
-      justify-content: flex-end !important
-    }
-
-    .justify-content-center {
-      justify-content: center !important
-    }
-
-    .align-items-center {
-      align-items: center !important
-    }
-
-    .mt-2 {
-      margin-top: .5rem !important
-    }
-
-    .mb-0 {
-      margin-bottom: 0 !important
-    }
-
-    .mb-2 {
-      margin-bottom: .5rem !important
-    }
-
-    .mb-3 {
-      margin-bottom: 1rem !important
-    }
-
-    .mb-4 {
-      margin-bottom: 1.5rem !important
-    }
-
-    .mb-auto {
-      margin-bottom: auto !important
-    }
-
-    .p-1 {
-      padding: .25rem !important
-    }
-
-    .p-3 {
-      padding: 1rem !important
-    }
-
-    .p-5 {
-      padding: 3rem !important
-    }
-
-    .px-3 {
-      padding-right: 1rem !important;
-      padding-left: 1rem !important
-    }
-
-    .pt-2 {
-      padding-top: .5rem !important
-    }
-
-    .pt-3 {
-      padding-top: 1rem !important
-    }
-
-    .pt-4 {
-      padding-top: 1.5rem !important
-    }
-
-    .pb-2 {
-      padding-bottom: .5rem !important
-    }
-
-    .gap-2 {
-      gap: .5rem !important
-    }
-
-    .gap-3 {
-      gap: 1rem !important
-    }
-
-    .fst-italic {
-      font-style: italic !important
-    }
-
-    .fw-bold {
-      font-weight: 700 !important
-    }
-
-    .text-center {
-      text-align: center !important
-    }
-
-    .text-dark {
-      --bs-text-opacity: 1;
-      color: rgba(var(--bs-dark-rgb), var(--bs-text-opacity)) !important
-    }
-
-    .text-white {
-      --bs-text-opacity: 1;
-      color: rgba(var(--bs-white-rgb), var(--bs-text-opacity)) !important
-    }
-
-    .bg-light {
-      --bs-bg-opacity: 1;
-      background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important
-    }
-
-    @media(min-width:992px) {
-      .d-lg-none {
-        display: none !important
-      }
-    }
+    .quote-item blockquote { margin-bottom: 0; }
+    .required-note { font-size: .8rem; color: var(--card-muted); }
   </style>
-  <link rel="stylesheet" href="styles-27GV6IWR.css" media="print" onload="this.media='all'"><noscript>
-    <link rel="stylesheet" href="styles-27GV6IWR.css">
-  </noscript>
 </head>
 
-<body><!--nghm-->
+<body>
   <div style="display:flex; flex-direction:row; min-height:100vh;">
-    <nav id="sidebar" class="d-flex flex-column p-3 position-fixed">
-      <h4 class="text-white mb-4"><i class="fas fa-quote-left"></i>
-        QuotesApp</h4>
+    <nav id="sidebar" class="d-flex flex-column p-3">
+      <h4 class="text-white mb-4"><i class="fas fa-book"></i> BookQuotes</h4>
       <ul class="nav nav-pills flex-column mb-auto">
+        <!-- FIX: "Home" is now the actual book list/CRUD page (matches the spec:
+             "a page that displays a list of all books" + "a home page with a button
+             to add a new book" are the same page). Removed the separate duplicate
+             "Books" nav item that pointed at an identical-but-disconnected page. -->
         <li class="nav-item">
-          <a href="#home" class="nav-link active" onclick="showPage('home'); return false;"> <i class="fas fa-home"></i>
-            Home</a>
+          <a href="#" class="nav-link active" data-page="home" onclick="showPage('home'); return false;">
+            <i class="fas fa-home"></i> Home
+          </a>
         </li>
         <li>
-          <a href="#quotes" class="nav-link" onclick="showPage('quotes'); return false;"> <i
-              class="fas fa-quote-right"></i> My Quotes</a>
-        </li>
-        <li>
-          <a href="#books" class="nav-link" onclick="showPage('books'); return false;"> <i class="fas fa-book"></i>
-            Books</a>
+          <a href="#" class="nav-link" data-page="quotes" onclick="showPage('quotes'); return false;">
+            <i class="fas fa-quote-right"></i> My Quotes
+          </a>
         </li>
       </ul>
     </nav>
 
-    <div style="flex:1; display:flex; flex-direction:column; margin-left:250px;">
-      <nav class="navbar navbar-light bg-light px-3 d-flex align-items-center sticky-top pt-3 ">
-        <div class="container">
-
-          <div class="col-sm">
-          </div>
-
-        </div>
-        <div class="d-flex align-items-center gap-2">
-          <button class="btn btn-outline-secondary d-lg-none" id="sidebarToggle" type="button" aria-label="Toggle menu">
-            <span class="navbar-toggler-icon"></span>
+    <div class="app-body">
+      <nav class="navbar navbar-light bg-light px-3 d-flex align-items-center sticky-top py-2">
+        <button class="btn btn-outline-secondary d-lg-none" id="sidebarToggle" type="button" aria-label="Toggle menu">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="ms-auto d-flex align-items-center gap-2">
+          <button id="theme-toggle" class="btn btn-outline-secondary" aria-label="Switch theme">
+            <i class="fas fa-moon" id="theme-icon"></i>
           </button>
-          <a class="navbar-brand mb-0" href="#">
-            <i class="fas fa-quote-left"></i> Books
-          </a>
-        </div>
-
-        <div class="row justify-content-end">
-          <div class="col-auto">
-            <button id="theme-toggle" class="btn btn-outline-secondary" aria-label="Switch theme">
-              <i class="fas fa-moon" id="theme-icon">Dark</i>
-            </button>
-          </div>
-          <div class="col-auto">
-            <button id="Login" class="btn btn-outline-secondary" aria-label="Switch theme">
-
-              <i class="fas fa-moon" id="theme-icon">Login</i>
-
-            </button>
-          </div>
+          <button id="loginBtn" class="btn btn-outline-secondary">
+            <i class="fas fa-user"></i> <span id="loginBtnText">Login</span>
+          </button>
         </div>
       </nav>
 
       <div class="header">
-        <h1><i class="fas fa-quote-left pt-4"></i> Welcome to Bookstore</h1>
+        <h1><i class="fas fa-quote-left"></i> Welcome to Bookstore</h1>
       </div>
 
-      <div id="content-area" class="flex-fill p-3">
-        <div id="home" class="page">
-          <h2>Welcome!</h2>
-          <p>This is a simple quotes &amp; bookstore app where you can add your
-            favorite quotes and manage your books.</p>
-          <div class="card favorite-card">
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkLBB9QfyTHUdKm6uJLKtcrfbFz9Fp4kFtYpQy5ZUaLA&amp;s=10"
-              alt="Book Cover">
-            <div class="card-body" id="book_data">
-              <div class="favorite-star" title="Favorite">★</div>
-              <h5 id="title">Book Title</h5>
-              <h6 id="author">Author Name</h6>
-              <p id="year">Published in 2023</p>
+      <div id="content-area">
+
+        <!-- HOME / BOOKS PAGE ================================================ -->
+        <div id="home" class="page active">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div>
+              <h2 class="mb-1">My Books</h2>
+              <p class="mb-0 text-muted">Manage your book collection.</p>
             </div>
+            <!-- FIX: Add New Book button now lives on Home, and it is disabled until
+                 logged in (spec requires auth before CRUD). -->
+            <button class="btn btn-success" id="addBookBtn" disabled>
+              <i class="fas fa-plus"></i> Add New Book
+            </button>
           </div>
-
-        </div>
-        <div id="quotes" class="page" style="display:none;">
-          <h2>My Quotes</h2>
-          <div class="row">
-            <div class="col">
-              <ul class="list-group">
-                <li class="list-group-item mb-2 p-1">
-                  <blockquote class="blockquote text-center">
-                    <p class="mb-0 fst-italic">Be yourself; everyone else is
-                      already taken.</p>
-                    <footer class="blockquote-footer"><cite title="Source Title" class="fw-bold text-dark">Oscar
-                        Wilde</cite></footer>
-                  </blockquote>
-                </li>
-                <li class=" list-group-item mb-2 p-1">
-                  <blockquote class="blockquote text-center">
-                    <p class="mb-0 fst-italic">Whether you think you can or
-                      think you
-                      can't, you're right."</p>
-                    <footer class="blockquote-footer"><cite title="Source Title" class="fw-bold text-dark">Henry
-                        Ford</cite></footer>
-                  </blockquote>
-                </li>
-                <li class=" list-group-item mb-2 p-1">
-                  <blockquote class="blockquote text-center">
-                    <p class="mb-0 fst-italic">Keep going.</p>
-                    <footer class="blockquote-footer"><cite title="Source Title" class="fw-bold text-dark">Winston
-                        Churchill</cite></footer>
-                  </blockquote>
-                </li>
-                <li class=" list-group-item mb-2 p-1">
-                  <blockquote class="blockquote text-center">
-                    <p class="mb-0 fst-italic">If you're offered a seat on a
-                      rocket ship, don't ask what seat! Just get on. </p>
-                    <footer class="blockquote-footer"><cite title="Source Title" class="fw-bold text-dark">Sheryl
-                        Sandberg</cite></footer>
-                  </blockquote>
-                </li>
-                <li class=" list-group-item p-1">
-                  <blockquote class="blockquote text-center">
-                    <p class="mb-0 fst-italic">When I let go of what I
-                      am, I become what I might be</p>
-                    <footer class="blockquote-footer"><cite title="Source Title" class="fw-bold text-dark">Lao
-                        Tzu</cite></footer>
-                  </blockquote>
-                </li>
-
-                <div id="quotesList" class="list-group mt-2 ">
-                </div>
-              </ul>
-            </div>
-            <form id="quoteForm" class="mb-4 col">
-              <div class="mb-3">
-                <label for="quoteText" class="form-label">Quote</label>
-                <textarea class="form-control" id="quoteText" rows="3" required></textarea>
-              </div>
-              <div class="mb-3">
-                <label for="quoteAuthor" class="form-label">Author</label>
-                <input type="text" class="form-control" id="quoteAuthor" required>
-              </div>
-              <button type="submit" class="btn btn-primary w-100 d-block">
-                <i class="fas fa-plus"></i> Add Quote
-              </button>
-            </form>
-
-          </div>
-
-        </div>
-        <div id="books" class="page" style="display:none;">
-          <h2>My Books</h2>
-          <button class="btn btn-success mb-3" id="addBookBtn" disabled>
-            <i class="fas fa-plus"></i> Add New Book
-          </button>
+          <p id="loginHint" class="required-note">Log in to add, edit, or delete books.</p>
           <div id="bookCardsContainer" class="d-flex flex-wrap gap-3"></div>
+          <p id="noBooksMsg" class="text-muted" style="display:none;">No books yet — add your first one.</p>
         </div>
-      </div>
-      <footer>
-        <p class="footer_page pt-2 pb-2">© 2024 Quotes &amp; Bookstore. All
-          rights reserved.</p>
-      </footer>
-    </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-  <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="addBookModalLabel">Add New Book</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="addBookForm">
+        <!-- ADD BOOK PAGE (was a modal; spec asks for a redirect to a form page) === -->
+        <div id="addBook" class="page">
+          <h2>Add New Book</h2>
+          <form id="addBookForm" class="col-12 col-md-6">
             <div class="mb-3">
               <label for="bookTitle" class="form-label">Title</label>
               <input type="text" class="form-control" id="bookTitle" required>
@@ -1682,1680 +186,457 @@
               <label for="pubDate" class="form-label">Publication Year</label>
               <input type="number" class="form-control" id="pubDate" required>
             </div>
-            <button type="submit" class="btn btn-primary">Add Book</button>
+            <button type="submit" class="btn btn-primary">Save Book</button>
+            <button type="button" class="btn btn-outline-secondary" onclick="showPage('home')">Cancel</button>
           </form>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="modal fade" id="editBookModal" tabindex="-1" aria-labelledby="editBookModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editBookModalLabel">AddBook</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="EditBookForm">
+        <!-- EDIT BOOK PAGE (was a modal, same fix as above) ==================== -->
+        <div id="editBook" class="page">
+          <h2>Edit Book</h2>
+          <form id="editBookForm" class="col-12 col-md-6">
+            <input type="hidden" id="editBookId">
             <div class="mb-3">
-              <label for="editbookTitle" class="form-label">Title</label>
-              <input type="text" class="form-control" id="editbookTitle" required>
+              <label for="editBookTitle" class="form-label">Title</label>
+              <input type="text" class="form-control" id="editBookTitle" required>
             </div>
             <div class="mb-3">
               <label for="editBookAuthor" class="form-label">Author</label>
               <input type="text" class="form-control" id="editBookAuthor" required>
             </div>
             <div class="mb-3">
-              <label for="year" class="form-label">Publication Year</label>
-              <input type="number" class="form-control" id="publish_year" required>
+              <label for="editPubDate" class="form-label">Publication Year</label>
+              <input type="number" class="form-control" id="editPubDate" required>
             </div>
-            <button type="submit" class="btn btn-primary">Edit Book</button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <button type="button" class="btn btn-outline-secondary" onclick="showPage('home')">Cancel</button>
           </form>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="modal fade p-5" id="LoginModal" tabindex="-1" aria-labelledby="LoginModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="LoginLabel"></h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" id="close-button" aria-label="Close"></button>
-        </div>
-        <div class="alert alert-success d-none" id="alert_button" role="alert">
-          <h4 class="alert-heading">Well done!</h4>
-          <p>Invalid username and password</p>
-          <hr>
-          <p class="mb-0">register first</p>
-        </div>
-        <div class="modal-body">
-          <form id="LoginForm">
-            <div class="mb-3">
-              <label for="Username" class="form-label">Username</label>
-              <input type="text" class="form-control" id="Username" required>
+        <!-- QUOTES PAGE ======================================================== -->
+        <div id="quotes" class="page">
+          <h2>My Quotes</h2>
+          <div class="row">
+            <div class="col-12 col-md-7">
+              <ul class="list-group" id="quotesList"></ul>
             </div>
-            <div class="mb-3">
-              <label for="Password" class="form-label">Password</label>
-<input type="password" class="form-control" id="Password" minlength="8" required>
-            </div>
-            <div id="inputAlert" class="alert alert-warning d-none" role="alert">
-              Please fill in both Username and Password.
-            </div>
-            <div class="mb-3 container">
-              <div class="row justify-content-center">
-                <div class="col-10 col-sm-8 col-md-6">
-                  <button type="button" class="btn btn-primary btn-lg w-100" id="register">Register</button>
+            <div class="col-12 col-md-5">
+              <form id="quoteForm" class="mb-4">
+                <input type="hidden" id="quoteEditId">
+                <div class="mb-3">
+                  <label for="quoteText" class="form-label">Quote</label>
+                  <textarea class="form-control" id="quoteText" rows="3" required></textarea>
                 </div>
-              </div>
-            </div>
-
-          </form>
-        </div>
-        <div class="mb-3 container">
-          <div class="row justify-content-center">
-            <div class="col-10 col-sm-8 col-md-6">
-              <button type="button" class="btn btn-primary btn-lg w-100" id="login_button">Login</button>
+                <div class="mb-3">
+                  <label for="quoteAuthor" class="form-label">Author</label>
+                  <input type="text" class="form-control" id="quoteAuthor" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100" id="quoteSubmitBtn">
+                  <i class="fas fa-plus"></i> Add Quote
+                </button>
+                <button type="button" class="btn btn-outline-secondary w-100 mt-2 d-none" id="quoteCancelBtn">
+                  Cancel edit
+                </button>
+              </form>
             </div>
           </div>
         </div>
+
+      </div>
+
+      <footer class="p-3 text-center">
+        <p class="mb-0">© 2026 Bookstore &amp; Quotes. All rights reserved.</p>
+      </footer>
+    </div>
+  </div>
+
+  <!-- LOGIN / REGISTER MODAL =============================================== -->
+  <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Log in or register</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="authAlert" class="alert alert-danger d-none" role="alert"></div>
+          <form id="authForm">
+            <div class="mb-3">
+              <label for="authUsername" class="form-label">Username</label>
+              <input type="text" class="form-control" id="authUsername" required>
+            </div>
+            <div class="mb-3">
+              <label for="authPassword" class="form-label">Password</label>
+              <input type="password" class="form-control" id="authPassword" minlength="8" required>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary flex-fill" data-mode="login">Login</button>
+              <button type="button" class="btn btn-outline-primary flex-fill" id="registerBtn">Register</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
 
-  <script type="application/json" id="jsonData">
-[
-  {
-    "author": "Chinua Achebe",
-    "country": "Nigeria",
-    "imageLink": "images/things-fall-apart.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Things_Fall_Apart\n",
-    "pages": 209,
-    "title": "Things Fall Apart",
-    "year": 1958
-  },
-  {
-    "author": "Hans Christian Andersen",
-    "country": "Denmark",
-    "imageLink": "images/fairy-tales.jpg",
-    "language": "Danish",
-    "link": "https://en.wikipedia.org/wiki/Fairy_Tales_Told_for_Children._First_Collection.\n",
-    "pages": 784,
-    "title": "Fairy tales",
-    "year": 1836
-  },
-  {
-    "author": "Dante Alighieri",
-    "country": "Italy",
-    "imageLink": "images/the-divine-comedy.jpg",
-    "language": "Italian",
-    "link": "https://en.wikipedia.org/wiki/Divine_Comedy\n",
-    "pages": 928,
-    "title": "The Divine Comedy",
-    "year": 1315
-  },
-  {
-    "author": "Unknown",
-    "country": "Sumer and Akkadian Empire",
-    "imageLink": "images/the-epic-of-gilgamesh.jpg",
-    "language": "Akkadian",
-    "link": "https://en.wikipedia.org/wiki/Epic_of_Gilgamesh\n",
-    "pages": 160,
-    "title": "The Epic Of Gilgamesh",
-    "year": -1700
-  },
-  {
-    "author": "Unknown",
-    "country": "Achaemenid Empire",
-    "imageLink": "images/the-book-of-job.jpg",
-    "language": "Hebrew",
-    "link": "https://en.wikipedia.org/wiki/Book_of_Job\n",
-    "pages": 176,
-    "title": "The Book Of Job",
-    "year": -600
-  },
-  {
-    "author": "Unknown",
-    "country": "India/Iran/Iraq/Egypt/Tajikistan",
-    "imageLink": "images/one-thousand-and-one-nights.jpg",
-    "language": "Arabic",
-    "link": "https://en.wikipedia.org/wiki/One_Thousand_and_One_Nights\n",
-    "pages": 288,
-    "title": "One Thousand and One Nights",
-    "year": 1200
-  },
-  {
-    "author": "Unknown",
-    "country": "Iceland",
-    "imageLink": "images/njals-saga.jpg",
-    "language": "Old Norse",
-    "link": "https://en.wikipedia.org/wiki/Nj%C3%A1ls_saga\n",
-    "pages": 384,
-    "title": "Nj\u00e1l's Saga",
-    "year": 1350
-  },
-  {
-    "author": "Jane Austen",
-    "country": "United Kingdom",
-    "imageLink": "images/pride-and-prejudice.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Pride_and_Prejudice\n",
-    "pages": 226,
-    "title": "Pride and Prejudice",
-    "year": 1813
-  },
-  {
-    "author": "Honor\u00e9 de Balzac",
-    "country": "France",
-    "imageLink": "images/le-pere-goriot.jpg",
-    "language": "French",
-    "link": "https://en.wikipedia.org/wiki/Le_P%C3%A8re_Goriot\n",
-    "pages": 443,
-    "title": "Le P\u00e8re Goriot",
-    "year": 1835
-  },
-  {
-    "author": "Samuel Beckett",
-    "country": "Republic of Ireland",
-    "imageLink": "images/molloy-malone-dies-the-unnamable.jpg",
-    "language": "French, English",
-    "link": "https://en.wikipedia.org/wiki/Molloy_(novel)\n",
-    "pages": 256,
-    "title": "Molloy, Malone Dies, The Unnamable, the trilogy",
-    "year": 1952
-  },
-  {
-    "author": "Giovanni Boccaccio",
-    "country": "Italy",
-    "imageLink": "images/the-decameron.jpg",
-    "language": "Italian",
-    "link": "https://en.wikipedia.org/wiki/The_Decameron\n",
-    "pages": 1024,
-    "title": "The Decameron",
-    "year": 1351
-  },
-  {
-    "author": "Jorge Luis Borges",
-    "country": "Argentina",
-    "imageLink": "images/ficciones.jpg",
-    "language": "Spanish",
-    "link": "https://en.wikipedia.org/wiki/Ficciones\n",
-    "pages": 224,
-    "title": "Ficciones",
-    "year": 1965
-  },
-  {
-    "author": "Emily Bront\u00eb",
-    "country": "United Kingdom",
-    "imageLink": "images/wuthering-heights.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Wuthering_Heights\n",
-    "pages": 342,
-    "title": "Wuthering Heights",
-    "year": 1847
-  },
-  {
-    "author": "Albert Camus",
-    "country": "Algeria, French Empire",
-    "imageLink": "images/l-etranger.jpg",
-    "language": "French",
-    "link": "https://en.wikipedia.org/wiki/The_Stranger_(novel)\n",
-    "pages": 185,
-    "title": "The Stranger",
-    "year": 1942
-  },
-  {
-    "author": "Paul Celan",
-    "country": "Romania, France",
-    "imageLink": "images/poems-paul-celan.jpg",
-    "language": "German",
-    "link": "\n",
-    "pages": 320,
-    "title": "Poems",
-    "year": 1952
-  },
-  {
-    "author": "Louis-Ferdinand C\u00e9line",
-    "country": "France",
-    "imageLink": "images/voyage-au-bout-de-la-nuit.jpg",
-    "language": "French",
-    "link": "https://en.wikipedia.org/wiki/Journey_to_the_End_of_the_Night\n",
-    "pages": 505,
-    "title": "Journey to the End of the Night",
-    "year": 1932
-  },
-  {
-    "author": "Miguel de Cervantes",
-    "country": "Spain",
-    "imageLink": "images/don-quijote-de-la-mancha.jpg",
-    "language": "Spanish",
-    "link": "https://en.wikipedia.org/wiki/Don_Quixote\n",
-    "pages": 1056,
-    "title": "Don Quijote De La Mancha",
-    "year": 1610
-  },
-  {
-    "author": "Geoffrey Chaucer",
-    "country": "England",
-    "imageLink": "images/the-canterbury-tales.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/The_Canterbury_Tales\n",
-    "pages": 544,
-    "title": "The Canterbury Tales",
-    "year": 1450
-  },
-  {
-    "author": "Anton Chekhov",
-    "country": "Russia",
-    "imageLink": "images/stories-of-anton-chekhov.jpg",
-    "language": "Russian",
-    "link": "https://en.wikipedia.org/wiki/List_of_short_stories_by_Anton_Chekhov\n",
-    "pages": 194,
-    "title": "Stories",
-    "year": 1886
-  },
-  {
-    "author": "Joseph Conrad",
-    "country": "United Kingdom",
-    "imageLink": "images/nostromo.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Nostromo\n",
-    "pages": 320,
-    "title": "Nostromo",
-    "year": 1904
-  },
-  {
-    "author": "Charles Dickens",
-    "country": "United Kingdom",
-    "imageLink": "images/great-expectations.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Great_Expectations\n",
-    "pages": 194,
-    "title": "Great Expectations",
-    "year": 1861
-  },
-  {
-    "author": "Denis Diderot",
-    "country": "France",
-    "imageLink": "images/jacques-the-fatalist.jpg",
-    "language": "French",
-    "link": "https://en.wikipedia.org/wiki/Jacques_the_Fatalist\n",
-    "pages": 596,
-    "title": "Jacques the Fatalist",
-    "year": 1796
-  },
-  {
-    "author": "Alfred D\u00f6blin",
-    "country": "Germany",
-    "imageLink": "images/berlin-alexanderplatz.jpg",
-    "language": "German",
-    "link": "https://en.wikipedia.org/wiki/Berlin_Alexanderplatz\n",
-    "pages": 600,
-    "title": "Berlin Alexanderplatz",
-    "year": 1929
-  },
-  {
-    "author": "Fyodor Dostoevsky",
-    "country": "Russia",
-    "imageLink": "images/crime-and-punishment.jpg",
-    "language": "Russian",
-    "link": "https://en.wikipedia.org/wiki/Crime_and_Punishment\n",
-    "pages": 551,
-    "title": "Crime and Punishment",
-    "year": 1866
-  },
-  {
-    "author": "Fyodor Dostoevsky",
-    "country": "Russia",
-    "imageLink": "images/the-idiot.jpg",
-    "language": "Russian",
-    "link": "https://en.wikipedia.org/wiki/The_Idiot\n",
-    "pages": 656,
-    "title": "The Idiot",
-    "year": 1869
-  },
-  {
-    "author": "Fyodor Dostoevsky",
-    "country": "Russia",
-    "imageLink": "images/the-possessed.jpg",
-    "language": "Russian",
-    "link": "https://en.wikipedia.org/wiki/Demons_(Dostoyevsky_novel)\n",
-    "pages": 768,
-    "title": "The Possessed",
-    "year": 1872
-  },
-  {
-    "author": "Fyodor Dostoevsky",
-    "country": "Russia",
-    "imageLink": "images/the-brothers-karamazov.jpg",
-    "language": "Russian",
-    "link": "https://en.wikipedia.org/wiki/The_Brothers_Karamazov\n",
-    "pages": 824,
-    "title": "The Brothers Karamazov",
-    "year": 1880
-  },
-  {
-    "author": "George Eliot",
-    "country": "United Kingdom",
-    "imageLink": "images/middlemarch.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Middlemarch\n",
-    "pages": 800,
-    "title": "Middlemarch",
-    "year": 1871
-  },
-  {
-    "author": "Ralph Ellison",
-    "country": "United States",
-    "imageLink": "images/invisible-man.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Invisible_Man\n",
-    "pages": 581,
-    "title": "Invisible Man",
-    "year": 1952
-  },
-  {
-    "author": "Euripides",
-    "country": "Greece",
-    "imageLink": "images/medea.jpg",
-    "language": "Greek",
-    "link": "https://en.wikipedia.org/wiki/Medea_(play)\n",
-    "pages": 104,
-    "title": "Medea",
-    "year": -431
-  },
-  {
-    "author": "William Faulkner",
-    "country": "United States",
-    "imageLink": "images/absalom-absalom.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Absalom,_Absalom!\n",
-    "pages": 313,
-    "title": "Absalom, Absalom!",
-    "year": 1936
-  },
-  {
-    "author": "William Faulkner",
-    "country": "United States",
-    "imageLink": "images/the-sound-and-the-fury.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/The_Sound_and_the_Fury\n",
-    "pages": 326,
-    "title": "The Sound and the Fury",
-    "year": 1929
-  },
-  {
-    "author": "Gustave Flaubert",
-    "country": "France",
-    "imageLink": "images/madame-bovary.jpg",
-    "language": "French",
-    "link": "https://en.wikipedia.org/wiki/Madame_Bovary\n",
-    "pages": 528,
-    "title": "Madame Bovary",
-    "year": 1857
-  },
-  {
-    "author": "Gustave Flaubert",
-    "country": "France",
-    "imageLink": "images/l-education-sentimentale.jpg",
-    "language": "French",
-    "link": "https://en.wikipedia.org/wiki/Sentimental_Education\n",
-    "pages": 606,
-    "title": "Sentimental Education",
-    "year": 1869
-  },
-  {
-    "author": "Federico Garc\u00eda Lorca",
-    "country": "Spain",
-    "imageLink": "images/gypsy-ballads.jpg",
-    "language": "Spanish",
-    "link": "https://en.wikipedia.org/wiki/Gypsy_Ballads\n",
-    "pages": 218,
-    "title": "Gypsy Ballads",
-    "year": 1928
-  },
-  {
-    "author": "Gabriel Garc\u00eda M\u00e1rquez",
-    "country": "Colombia",
-    "imageLink": "images/one-hundred-years-of-solitude.jpg",
-    "language": "Spanish",
-    "link": "https://en.wikipedia.org/wiki/One_Hundred_Years_of_Solitude\n",
-    "pages": 417,
-    "title": "One Hundred Years of Solitude",
-    "year": 1967
-  },
-  {
-    "author": "Gabriel Garc\u00eda M\u00e1rquez",
-    "country": "Colombia",
-    "imageLink": "images/love-in-the-time-of-cholera.jpg",
-    "language": "Spanish",
-    "link": "https://en.wikipedia.org/wiki/Love_in_the_Time_of_Cholera\n",
-    "pages": 368,
-    "title": "Love in the Time of Cholera",
-    "year": 1985
-  },
-  {
-    "author": "Johann Wolfgang von Goethe",
-    "country": "Saxe-Weimar",
-    "imageLink": "images/faust.jpg",
-    "language": "German",
-    "link": "https://en.wikipedia.org/wiki/Goethe%27s_Faust\n",
-    "pages": 158,
-    "title": "Faust",
-    "year": 1832
-  },
-  {
-    "author": "Nikolai Gogol",
-    "country": "Russia",
-    "imageLink": "images/dead-souls.jpg",
-    "language": "Russian",
-    "link": "https://en.wikipedia.org/wiki/Dead_Souls\n",
-    "pages": 432,
-    "title": "Dead Souls",
-    "year": 1842
-  },
-  {
-    "author": "G\u00fcnter Grass",
-    "country": "Germany",
-    "imageLink": "images/the-tin-drum.jpg",
-    "language": "German",
-    "link": "https://en.wikipedia.org/wiki/The_Tin_Drum\n",
-    "pages": 600,
-    "title": "The Tin Drum",
-    "year": 1959
-  },
-  {
-    "author": "Jo\u00e3o Guimar\u00e3es Rosa",
-    "country": "Brazil",
-    "imageLink": "images/the-devil-to-pay-in-the-backlands.jpg",
-    "language": "Portuguese",
-    "link": "https://en.wikipedia.org/wiki/The_Devil_to_Pay_in_the_Backlands\n",
-    "pages": 494,
-    "title": "The Devil to Pay in the Backlands",
-    "year": 1956
-  },
-  {
-    "author": "Knut Hamsun",
-    "country": "Norway",
-    "imageLink": "images/hunger.jpg",
-    "language": "Norwegian",
-    "link": "https://en.wikipedia.org/wiki/Hunger_(Hamsun_novel)\n",
-    "pages": 176,
-    "title": "Hunger",
-    "year": 1890
-  },
-  {
-    "author": "Ernest Hemingway",
-    "country": "United States",
-    "imageLink": "images/the-old-man-and-the-sea.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/The_Old_Man_and_the_Sea\n",
-    "pages": 128,
-    "title": "The Old Man and the Sea",
-    "year": 1952
-  },
-  {
-    "author": "Homer",
-    "country": "Greece",
-    "imageLink": "images/the-iliad-of-homer.jpg",
-    "language": "Greek",
-    "link": "https://en.wikipedia.org/wiki/Iliad\n",
-    "pages": 608,
-    "title": "Iliad",
-    "year": -735
-  },
-  {
-    "author": "Homer",
-    "country": "Greece",
-    "imageLink": "images/the-odyssey-of-homer.jpg",
-    "language": "Greek",
-    "link": "https://en.wikipedia.org/wiki/Odyssey\n",
-    "pages": 374,
-    "title": "Odyssey",
-    "year": -800
-  },
-  {
-    "author": "Henrik Ibsen",
-    "country": "Norway",
-    "imageLink": "images/a-Dolls-house.jpg",
-    "language": "Norwegian",
-    "link": "https://en.wikipedia.org/wiki/A_Doll%27s_House\n",
-    "pages": 68,
-    "title": "A Doll's House",
-    "year": 1879
-  },
-  {
-    "author": "James Joyce",
-    "country": "Irish Free State",
-    "imageLink": "images/ulysses.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Ulysses_(novel)\n",
-    "pages": 228,
-    "title": "Ulysses",
-    "year": 1922
-  },
-  {
-    "author": "Franz Kafka",
-    "country": "Czechoslovakia",
-    "imageLink": "images/stories-of-franz-kafka.jpg",
-    "language": "German",
-    "link": "https://en.wikipedia.org/wiki/Franz_Kafka_bibliography#Short_stories\n",
-    "pages": 488,
-    "title": "Stories",
-    "year": 1924
-  },
-  {
-    "author": "Franz Kafka",
-    "country": "Czechoslovakia",
-    "imageLink": "images/the-trial.jpg",
-    "language": "German",
-    "link": "https://en.wikipedia.org/wiki/The_Trial\n",
-    "pages": 160,
-    "title": "The Trial",
-    "year": 1925
-  },
-  {
-    "author": "Franz Kafka",
-    "country": "Czechoslovakia",
-    "imageLink": "images/the-castle.jpg",
-    "language": "German",
-    "link": "https://en.wikipedia.org/wiki/The_Castle_(novel)\n",
-    "pages": 352,
-    "title": "The Castle",
-    "year": 1926
-  },
-  {
-    "author": "K\u0101lid\u0101sa",
-    "country": "India",
-    "imageLink": "images/the-recognition-of-shakuntala.jpg",
-    "language": "Sanskrit",
-    "link": "https://en.wikipedia.org/wiki/Abhij%C3%B1%C4%81na%C5%9B%C4%81kuntalam\n",
-    "pages": 147,
-    "title": "The recognition of Shakuntala",
-    "year": 150
-  },
-  {
-    "author": "Yasunari Kawabata",
-    "country": "Japan",
-    "imageLink": "images/the-sound-of-the-mountain.jpg",
-    "language": "Japanese",
-    "link": "https://en.wikipedia.org/wiki/The_Sound_of_the_Mountain\n",
-    "pages": 288,
-    "title": "The Sound of the Mountain",
-    "year": 1954
-  },
-  {
-    "author": "Nikos Kazantzakis",
-    "country": "Greece",
-    "imageLink": "images/zorba-the-greek.jpg",
-    "language": "Greek",
-    "link": "https://en.wikipedia.org/wiki/Zorba_the_Greek\n",
-    "pages": 368,
-    "title": "Zorba the Greek",
-    "year": 1946
-  },
-  {
-    "author": "D. H. Lawrence",
-    "country": "United Kingdom",
-    "imageLink": "images/sons-and-lovers.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Sons_and_Lovers\n",
-    "pages": 432,
-    "title": "Sons and Lovers",
-    "year": 1913
-  },
-  {
-    "author": "Halld\u00f3r Laxness",
-    "country": "Iceland",
-    "imageLink": "images/independent-people.jpg",
-    "language": "Icelandic",
-    "link": "https://en.wikipedia.org/wiki/Independent_People\n",
-    "pages": 470,
-    "title": "Independent People",
-    "year": 1934
-  },
-  {
-    "author": "Giacomo Leopardi",
-    "country": "Italy",
-    "imageLink": "images/poems-giacomo-leopardi.jpg",
-    "language": "Italian",
-    "link": "\n",
-    "pages": 184,
-    "title": "Poems",
-    "year": 1818
-  },
-  {
-    "author": "Doris Lessing",
-    "country": "United Kingdom",
-    "imageLink": "images/the-golden-notebook.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/The_Golden_Notebook\n",
-    "pages": 688,
-    "title": "The Golden Notebook",
-    "year": 1962
-  },
-  {
-    "author": "Astrid Lindgren",
-    "country": "Sweden",
-    "imageLink": "images/pippi-longstocking.jpg",
-    "language": "Swedish",
-    "link": "https://en.wikipedia.org/wiki/Pippi_Longstocking\n",
-    "pages": 160,
-    "title": "Pippi Longstocking",
-    "year": 1945
-  },
-  {
-    "author": "Lu Xun",
-    "country": "China",
-    "imageLink": "images/diary-of-a-madman.jpg",
-    "language": "Chinese",
-    "link": "https://en.wikipedia.org/wiki/A_Madman%27s_Diary\n",
-    "pages": 389,
-    "title": "Diary of a Madman",
-    "year": 1918
-  },
-  {
-    "author": "Naguib Mahfouz",
-    "country": "Egypt",
-    "imageLink": "images/children-of-gebelawi.jpg",
-    "language": "Arabic",
-    "link": "https://en.wikipedia.org/wiki/Children_of_Gebelawi\n",
-    "pages": 355,
-    "title": "Children of Gebelawi",
-    "year": 1959
-  },
-  {
-    "author": "Thomas Mann",
-    "country": "Germany",
-    "imageLink": "images/buddenbrooks.jpg",
-    "language": "German",
-    "link": "https://en.wikipedia.org/wiki/Buddenbrooks\n",
-    "pages": 736,
-    "title": "Buddenbrooks",
-    "year": 1901
-  },
-  {
-    "author": "Thomas Mann",
-    "country": "Germany",
-    "imageLink": "images/the-magic-mountain.jpg",
-    "language": "German",
-    "link": "https://en.wikipedia.org/wiki/The_Magic_Mountain\n",
-    "pages": 720,
-    "title": "The Magic Mountain",
-    "year": 1924
-  },
-  {
-    "author": "Herman Melville",
-    "country": "United States",
-    "imageLink": "images/moby-dick.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Moby-Dick\n",
-    "pages": 378,
-    "title": "Moby Dick",
-    "year": 1851
-  },
-  {
-    "author": "Michel de Montaigne",
-    "country": "France",
-    "imageLink": "images/essais.jpg",
-    "language": "French",
-    "link": "https://en.wikipedia.org/wiki/Essays_(Montaigne)\n",
-    "pages": 404,
-    "title": "Essays",
-    "year": 1595
-  },
-  {
-    "author": "Elsa Morante",
-    "country": "Italy",
-    "imageLink": "images/history.jpg",
-    "language": "Italian",
-    "link": "https://en.wikipedia.org/wiki/History_(novel)\n",
-    "pages": 600,
-    "title": "History",
-    "year": 1974
-  },
-  {
-    "author": "Toni Morrison",
-    "country": "United States",
-    "imageLink": "images/beloved.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Beloved_(novel)\n",
-    "pages": 321,
-    "title": "Beloved",
-    "year": 1987
-  },
-  {
-    "author": "Murasaki Shikibu",
-    "country": "Japan",
-    "imageLink": "images/the-tale-of-genji.jpg",
-    "language": "Japanese",
-    "link": "https://en.wikipedia.org/wiki/The_Tale_of_Genji\n",
-    "pages": 1360,
-    "title": "The Tale of Genji",
-    "year": 1006
-  },
-  {
-    "author": "Robert Musil",
-    "country": "Austria",
-    "imageLink": "images/the-man-without-qualities.jpg",
-    "language": "German",
-    "link": "https://en.wikipedia.org/wiki/The_Man_Without_Qualities\n",
-    "pages": 365,
-    "title": "The Man Without Qualities",
-    "year": 1931
-  },
-  {
-    "author": "Vladimir Nabokov",
-    "country": "Russia/United States",
-    "imageLink": "images/lolita.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Lolita\n",
-    "pages": 317,
-    "title": "Lolita",
-    "year": 1955
-  },
-  {
-    "author": "George Orwell",
-    "country": "United Kingdom",
-    "imageLink": "images/nineteen-eighty-four.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Nineteen_Eighty-Four\n",
-    "pages": 272,
-    "title": "Nineteen Eighty-Four",
-    "year": 1949
-  },
-  {
-    "author": "Ovid",
-    "country": "Roman Empire",
-    "imageLink": "images/the-metamorphoses-of-ovid.jpg",
-    "language": "Classical Latin",
-    "link": "https://en.wikipedia.org/wiki/Metamorphoses\n",
-    "pages": 576,
-    "title": "Metamorphoses",
-    "year": 100
-  },
-  {
-    "author": "Fernando Pessoa",
-    "country": "Portugal",
-    "imageLink": "images/the-book-of-disquiet.jpg",
-    "language": "Portuguese",
-    "link": "https://en.wikipedia.org/wiki/The_Book_of_Disquiet\n",
-    "pages": 272,
-    "title": "The Book of Disquiet",
-    "year": 1928
-  },
-  {
-    "author": "Edgar Allan Poe",
-    "country": "United States",
-    "imageLink": "images/tales-and-poems-of-edgar-allan-poe.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Edgar_Allan_Poe_bibliography#Tales\n",
-    "pages": 842,
-    "title": "Tales",
-    "year": 1950
-  },
-  {
-    "author": "Marcel Proust",
-    "country": "France",
-    "imageLink": "images/a-la-recherche-du-temps-perdu.jpg",
-    "language": "French",
-    "link": "https://en.wikipedia.org/wiki/In_Search_of_Lost_Time\n",
-    "pages": 2408,
-    "title": "In Search of Lost Time",
-    "year": 1920
-  },
-  {
-    "author": "Fran\u00e7ois Rabelais",
-    "country": "France",
-    "imageLink": "images/gargantua-and-pantagruel.jpg",
-    "language": "French",
-    "link": "https://en.wikipedia.org/wiki/Gargantua_and_Pantagruel\n",
-    "pages": 623,
-    "title": "Gargantua and Pantagruel",
-    "year": 1533
-  },
-  {
-    "author": "Juan Rulfo",
-    "country": "Mexico",
-    "imageLink": "images/pedro-paramo.jpg",
-    "language": "Spanish",
-    "link": "https://en.wikipedia.org/wiki/Pedro_P%C3%A1ramo\n",
-    "pages": 124,
-    "title": "Pedro P\u00e1ramo",
-    "year": 1955
-  },
-  {
-    "author": "Rumi",
-    "country": "Sultanate of Rum",
-    "imageLink": "images/the-masnavi.jpg",
-    "language": "Persian",
-    "link": "https://en.wikipedia.org/wiki/Masnavi\n",
-    "pages": 438,
-    "title": "The Masnavi",
-    "year": 1236
-  },
-  {
-    "author": "Salman Rushdie",
-    "country": "United Kingdom, India",
-    "imageLink": "images/midnights-children.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Midnight%27s_Children\n",
-    "pages": 536,
-    "title": "Midnight's Children",
-    "year": 1981
-  },
-  {
-    "author": "Saadi",
-    "country": "Persia, Persian Empire",
-    "imageLink": "images/bostan.jpg",
-    "language": "Persian",
-    "link": "https://en.wikipedia.org/wiki/Bustan_(book)\n",
-    "pages": 298,
-    "title": "Bostan",
-    "year": 1257
-  },
-  {
-    "author": "Tayeb Salih",
-    "country": "Sudan",
-    "imageLink": "images/season-of-migration-to-the-north.jpg",
-    "language": "Arabic",
-    "link": "https://en.wikipedia.org/wiki/Season_of_Migration_to_the_North\n",
-    "pages": 139,
-    "title": "Season of Migration to the North",
-    "year": 1966
-  },
-  {
-    "author": "Jos\u00e9 Saramago",
-    "country": "Portugal",
-    "imageLink": "images/blindness.jpg",
-    "language": "Portuguese",
-    "link": "https://en.wikipedia.org/wiki/Blindness_(novel)\n",
-    "pages": 352,
-    "title": "Blindness",
-    "year": 1995
-  },
-  {
-    "author": "William Shakespeare",
-    "country": "England",
-    "imageLink": "images/hamlet.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Hamlet\n",
-    "pages": 432,
-    "title": "Hamlet",
-    "year": 1603
-  },
-  {
-    "author": "William Shakespeare",
-    "country": "England",
-    "imageLink": "images/king-lear.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/King_Lear\n",
-    "pages": 384,
-    "title": "King Lear",
-    "year": 1608
-  },
-  {
-    "author": "William Shakespeare",
-    "country": "England",
-    "imageLink": "images/othello.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Othello\n",
-    "pages": 314,
-    "title": "Othello",
-    "year": 1609
-  },
-  {
-    "author": "Sophocles",
-    "country": "Greece",
-    "imageLink": "images/oedipus-the-king.jpg",
-    "language": "Greek",
-    "link": "https://en.wikipedia.org/wiki/Oedipus_the_King\n",
-    "pages": 88,
-    "title": "Oedipus the King",
-    "year": -430
-  },
-  {
-    "author": "Stendhal",
-    "country": "France",
-    "imageLink": "images/le-rouge-et-le-noir.jpg",
-    "language": "French",
-    "link": "https://en.wikipedia.org/wiki/The_Red_and_the_Black\n",
-    "pages": 576,
-    "title": "The Red and the Black",
-    "year": 1830
-  },
-  {
-    "author": "Laurence Sterne",
-    "country": "England",
-    "imageLink": "images/the-life-and-opinions-of-tristram-shandy.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/The_Life_and_Opinions_of_Tristram_Shandy,_Gentleman\n",
-    "pages": 640,
-    "title": "The Life And Opinions of Tristram Shandy",
-    "year": 1760
-  },
-  {
-    "author": "Italo Svevo",
-    "country": "Italy",
-    "imageLink": "images/confessions-of-zeno.jpg",
-    "language": "Italian",
-    "link": "https://en.wikipedia.org/wiki/Zeno%27s_Conscience\n",
-    "pages": 412,
-    "title": "Confessions of Zeno",
-    "year": 1923
-  },
-  {
-    "author": "Jonathan Swift",
-    "country": "Ireland",
-    "imageLink": "images/gullivers-travels.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Gulliver%27s_Travels\n",
-    "pages": 178,
-    "title": "Gulliver's Travels",
-    "year": 1726
-  },
-  {
-    "author": "Leo Tolstoy",
-    "country": "Russia",
-    "imageLink": "images/war-and-peace.jpg",
-    "language": "Russian",
-    "link": "https://en.wikipedia.org/wiki/War_and_Peace\n",
-    "pages": 1296,
-    "title": "War and Peace",
-    "year": 1867
-  },
-  {
-    "author": "Leo Tolstoy",
-    "country": "Russia",
-    "imageLink": "images/anna-karenina.jpg",
-    "language": "Russian",
-    "link": "https://en.wikipedia.org/wiki/Anna_Karenina\n",
-    "pages": 864,
-    "title": "Anna Karenina",
-    "year": 1877
-  },
-  {
-    "author": "Leo Tolstoy",
-    "country": "Russia",
-    "imageLink": "images/the-death-of-ivan-ilyich.jpg",
-    "language": "Russian",
-    "link": "https://en.wikipedia.org/wiki/The_Death_of_Ivan_Ilyich\n",
-    "pages": 92,
-    "title": "The Death of Ivan Ilyich",
-    "year": 1886
-  },
-  {
-    "author": "Mark Twain",
-    "country": "United States",
-    "imageLink": "images/the-adventures-of-huckleberry-finn.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Adventures_of_Huckleberry_Finn\n",
-    "pages": 224,
-    "title": "The Adventures of Huckleberry Finn",
-    "year": 1884
-  },
-  {
-    "author": "Valmiki",
-    "country": "India",
-    "imageLink": "images/ramayana.jpg",
-    "language": "Sanskrit",
-    "link": "https://en.wikipedia.org/wiki/Ramayana\n",
-    "pages": 152,
-    "title": "Ramayana",
-    "year": -450
-  },
-  {
-    "author": "Virgil",
-    "country": "Roman Empire",
-    "imageLink": "images/the-aeneid.jpg",
-    "language": "Classical Latin",
-    "link": "https://en.wikipedia.org/wiki/Aeneid\n",
-    "pages": 442,
-    "title": "The Aeneid",
-    "year": -23
-  },
-  {
-    "author": "Vyasa",
-    "country": "India",
-    "imageLink": "images/the-mahab-harata.jpg",
-    "language": "Sanskrit",
-    "link": "https://en.wikipedia.org/wiki/Mahabharata\n",
-    "pages": 276,
-    "title": "Mahabharata",
-    "year": -700
-  },
-  {
-    "author": "Walt Whitman",
-    "country": "United States",
-    "imageLink": "images/leaves-of-grass.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Leaves_of_Grass\n",
-    "pages": 152,
-    "title": "Leaves of Grass",
-    "year": 1855
-  },
-  {
-    "author": "Virginia Woolf",
-    "country": "United Kingdom",
-    "imageLink": "images/mrs-dalloway.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/Mrs_Dalloway\n",
-    "pages": 216,
-    "title": "Mrs Dalloway",
-    "year": 1925
-  },
-  {
-    "author": "Virginia Woolf",
-    "country": "United Kingdom",
-    "imageLink": "images/to-the-lighthouse.jpg",
-    "language": "English",
-    "link": "https://en.wikipedia.org/wiki/To_the_Lighthouse\n",
-    "pages": 209,
-    "title": "To the Lighthouse",
-    "year": 1927
-  },
-  {
-    "author": "Marguerite Yourcenar",
-    "country": "France/Belgium",
-    "imageLink": "images/memoirs-of-hadrian.jpg",
-    "language": "French",
-    "link": "https://en.wikipedia.org/wiki/Memoirs_of_Hadrian\n",
-    "pages": 408,
-    "title": "Memoirs of Hadrian",
-    "year": 1951
-  }
-]
-</script>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    /* ======================================================================
+       ASSUMPTIONS ON THE BACKEND API
+       I only had your real login URL to go on:
+         POST https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net/api/auth/login
+       I've assumed a matching REST shape for the rest of a standard .NET 9
+       minimal-API/JWT setup. Replace API_BASE and the paths below with your
+       actual routes if they differ.
+       ====================================================================== */
+    const API_BASE = "https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net/api";
+    const ENDPOINTS = {
+      login: `${API_BASE}/auth/login`,
+      register: `${API_BASE}/auth/register`,
+      books: `${API_BASE}/books`
+    };
 
-    function New_book() {
-      const storedBook = JSON.parse(localStorage.getItem('books'));
-      if (storedBook && storedBook.length > 0) {
-        const lastIndex = storedBook.length - 1;
-        const lastBook = storedBook[lastIndex];
-        document.getElementById('title').textContent = lastBook.title;
-        document.getElementById('author').textContent = lastBook.author;
-        document.getElementById('year').textContent = "Published in " + lastBook.year;
-      }
+    // ---- Auth state ---------------------------------------------------
+    function getToken() { return localStorage.getItem('token'); }
+    function getUsername() { return localStorage.getItem('username'); }
+    function isLoggedIn() { return !!getToken(); }
+
+    function authHeaders(extra = {}) {
+      const h = { 'Content-Type': 'application/json', ...extra };
+      const token = getToken();
+      // FIX: this is the piece that was completely missing — the JWT is now
+      // actually attached to every book request instead of just sitting in
+      // localStorage unused.
+      if (token) h['Authorization'] = `Bearer ${token}`;
+      return h;
     }
 
+    function setLoggedInUI() {
+      const loggedIn = isLoggedIn();
+      document.getElementById('addBookBtn').disabled = !loggedIn;
+      document.getElementById('loginHint').style.display = loggedIn ? 'none' : 'block';
+      document.getElementById('loginBtnText').textContent = loggedIn ? `Logout (${getUsername()})` : 'Login';
+    }
 
-
-    /*  function toggleLoginLogout(isLoggedIn) {
-       const loginButton = document.getElementById('Login');
-       if (isLoggedIn) {
-         loginButton.innerHTML = '<i class="fas fa-sign-out-alt" id="theme-icon"></i> Logout';
-       } else {
-         loginButton.innerHTML = '<i class="fas fa-moon" id="theme-icon"></i> Login';
-       }
-     }  */
-
-
-    document.getElementById('sidebarToggle').addEventListener('click', function () {
-      document.getElementById('sidebar').classList.toggle('show');
+    document.getElementById('loginBtn').addEventListener('click', () => {
+      if (isLoggedIn()) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        setLoggedInUI();
+        loadBooks();
+      } else {
+        document.getElementById('authForm').reset();
+        document.getElementById('authAlert').classList.add('d-none');
+        new bootstrap.Modal(document.getElementById('authModal')).show();
+      }
     });
 
+    function showAuthError(msg) {
+      const el = document.getElementById('authAlert');
+      el.textContent = msg;
+      el.classList.remove('d-none');
+    }
 
-    document.addEventListener('click', function (event) {
-      const sidebar = document.getElementById('sidebar');
-      const toggleBtn = document.getElementById('sidebarToggle');
-      if (!sidebar.classList.contains('show')) return;
-      if (sidebar.contains(event.target) || toggleBtn.contains(event.target)) return;
-      sidebar.classList.remove('show');
+    // FIX: Register now actually calls the backend instead of only writing
+    // to localStorage, so a "registered" user really exists server-side.
+    document.getElementById('registerBtn').addEventListener('click', async () => {
+      const username = document.getElementById('authUsername').value.trim();
+      const password = document.getElementById('authPassword').value.trim();
+      if (!username || !password) { showAuthError('Enter a username and password.'); return; }
+
+      try {
+        const res = await fetch(ENDPOINTS.register, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        if (!res.ok) throw new Error(`Registration failed (${res.status})`);
+        showAuthError('');
+        document.getElementById('authAlert').classList.add('d-none');
+        alert('Registered! You can log in now.');
+      } catch (err) {
+        showAuthError(err.message || 'Registration failed.');
+      }
     });
 
+    // FIX: Login now trusts the API as the source of truth (no more checking
+    // a locally-cached user list before ever calling the server).
+    document.getElementById('authForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('authUsername').value.trim();
+      const password = document.getElementById('authPassword').value.trim();
+      if (!username || !password) { showAuthError('Enter a username and password.'); return; }
 
+      try {
+        const res = await fetch(ENDPOINTS.login, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        if (!res.ok) throw new Error('Invalid username or password.');
+        const data = await res.json();
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('username', username);
+        bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
+        setLoggedInUI();
+        loadBooks();
+      } catch (err) {
+        showAuthError(err.message || 'Login failed.');
+      }
+    });
+
+    // ---- Page routing (redirect-style navigation, no modals for CRUD) ---
     function showPage(page) {
-      document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-      document.getElementById(page).style.display = 'block';
-      document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-      document.querySelector(`.nav-link[href="#${page}"]`)?.classList.add('active');
-    }
-
-
-    function loadBooks() {
-      const container = document.getElementById('booksContainer');
-      if (!container) {
-        console.error("Container element with ID 'booksContainer' not found.");
-        return;
-      }
-      container.innerHTML = '';
-      const books = JSON.parse(localStorage.getItem('books')) || [];
-
-      books.forEach((book, index) => {
-
-        const cardDiv = document.createElement('div');
-        cardDiv.className = 'card mb-3';
-        const cardBody = document.createElement('div');
-        cardBody.className = 'card-body';
-
-        const titleEl = document.createElement('h5');
-        titleEl.className = 'card-title';
-        titleEl.id = `book_title_${index}`;
-        titleEl.textContent = book.title || 'No Title';
-
-        const authorEl = document.createElement('h6');
-        authorEl.className = 'card-subtitle mb-2 text-muted';
-        authorEl.id = `book_author_${index}`;
-        authorEl.textContent = book.author || 'No Author';
-
-        const yearEl = document.createElement('p');
-        yearEl.className = 'card-text';
-        yearEl.id = `book_year_${index}`;
-        yearEl.textContent = book.publicationYear || 'No Year';
-
-        const editBtn = document.createElement('a');
-        editBtn.href = '#';
-        editBtn.className = 'btn btn-primary btn-sm btn-md-normal me-2 mb-2 mb-sm-0';
-        editBtn.textContent = 'Edit';
-        editBtn.setAttribute('role', 'button');
-
-        const deleteBtn = document.createElement('a');
-        deleteBtn.href = '#';
-        deleteBtn.className = 'btn btn-danger btn-sm btn-md-normal mb-2 mb-sm-0';
-        deleteBtn.textContent = 'Delete';
-        deleteBtn.onclick = () => {
-          delete_book(index);
-        };
-
-        cardBody.appendChild(titleEl);
-        cardBody.appendChild(authorEl);
-        cardBody.appendChild(yearEl);
-        cardBody.appendChild(editBtn);
-        cardBody.appendChild(deleteBtn);
-
-        cardDiv.appendChild(cardBody);
-        container.appendChild(cardDiv);
-
-      }
-      );
-    }
-
-
-    document.getElementById('Login').addEventListener('click', function () {
-      const buttonText = this.textContent.trim();
-
-      if (buttonText === 'Login') {
-        toggleLoginLogout(true);
-      } else if (buttonText === 'Logout') {
-        /* localStorage.removeItem('user'); */
-        getBooks();
-        location.reload();
-        toggleLoginLogout(false);
-      }
-    });
-
-
-    const quotes = [];
-
-    function loadQuotes() {
-      const quotesList = document.getElementById('quotesList');
-      quotesList.innerHTML = '';
-
-      quotes.forEach(q => {
-        const item = document.createElement('li');
-        item.className = 'list-group-item mb-2 p-1';
-        item.innerHTML = `<blockquote class="blockquote mb-0 text-center">
-      <p class="fst-italic">${q.text}</p>
-      <footer class="blockquote-footer fw-bold text-dark mb-3">${q.author}</footer>
-    </blockquote>`;
-        quotesList.appendChild(item);
-
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(page).classList.add('active');
+      document.querySelectorAll('.nav-link[data-page]').forEach(link => {
+        link.classList.toggle('active', link.dataset.page === page);
       });
     }
 
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('show');
+    });
+    document.addEventListener('click', (e) => {
+      const sidebar = document.getElementById('sidebar');
+      const toggleBtn = document.getElementById('sidebarToggle');
+      if (!sidebar.classList.contains('show')) return;
+      if (sidebar.contains(e.target) || toggleBtn.contains(e.target)) return;
+      sidebar.classList.remove('show');
+    });
 
-    document.getElementById('quoteForm').onsubmit = e => {
+    // ---- Theme toggle ---------------------------------------------------
+    const themeIcon = document.getElementById('theme-icon');
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      document.body.classList.toggle('dark-theme');
+      const dark = document.body.classList.contains('dark-theme');
+      themeIcon.classList.toggle('fa-moon', !dark);
+      themeIcon.classList.toggle('fa-sun', dark);
+    });
+
+    // ---- Books: local cache as a resilient fallback, API as source of truth
+    // (If your API is unreachable while you develop, this keeps the UI usable;
+    // once the real endpoints are live, drop the catch-block fallback.)
+    function localBooks() { return JSON.parse(localStorage.getItem('books_cache')) || []; }
+    function saveLocalBooks(books) { localStorage.setItem('books_cache', JSON.stringify(books)); }
+
+    async function loadBooks() {
+      const container = document.getElementById('bookCardsContainer');
+      const noBooksMsg = document.getElementById('noBooksMsg');
+      container.innerHTML = '';
+
+      if (!isLoggedIn()) {
+        noBooksMsg.style.display = 'none';
+        return;
+      }
+
+      let books = [];
+      try {
+        const res = await fetch(ENDPOINTS.books, { headers: authHeaders() });
+        if (!res.ok) throw new Error('API not reachable');
+        books = await res.json();
+        saveLocalBooks(books);
+      } catch {
+        books = localBooks(); // fallback for offline/demo use
+      }
+
+      noBooksMsg.style.display = books.length ? 'none' : 'block';
+      books.forEach(book => container.appendChild(renderBookCard(book)));
+    }
+
+    function renderBookCard(book) {
+      const card = document.createElement('div');
+      card.className = 'card book-card';
+      card.style.width = '14rem';
+      card.innerHTML = `
+        <div class="card-body">
+          <h5 class="card-title">${escapeHtml(book.title)}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">${escapeHtml(book.author)}</h6>
+          <p class="card-text">Published in ${escapeHtml(String(book.year))}</p>
+          <button class="btn btn-primary btn-sm me-1 edit-btn">Edit</button>
+          <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+        </div>`;
+      card.querySelector('.edit-btn').addEventListener('click', () => openEditBook(book));
+      card.querySelector('.delete-btn').addEventListener('click', () => deleteBook(book));
+      return card;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    document.getElementById('addBookBtn').addEventListener('click', () => {
+      document.getElementById('addBookForm').reset();
+      showPage('addBook'); // FIX: real page redirect instead of a modal
+    });
+
+    // FIX: submit now calls the API (with the JWT attached) and, on success,
+    // redirects back to Home per the spec — "After submitting the form, the
+    // user should be redirected back to the home page."
+    document.getElementById('addBookForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const book = {
+        title: document.getElementById('bookTitle').value.trim(),
+        author: document.getElementById('bookAuthor').value.trim(),
+        year: parseInt(document.getElementById('pubDate').value, 10)
+      };
+      try {
+        const res = await fetch(ENDPOINTS.books, {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify(book)
+        });
+        if (!res.ok) throw new Error();
+      } catch {
+        // fallback so the demo still works without a live backend
+        const books = localBooks();
+        book.id = crypto.randomUUID();
+        books.push(book);
+        saveLocalBooks(books);
+      }
+      await loadBooks();
+      showPage('home');
+    });
+
+    function openEditBook(book) {
+      document.getElementById('editBookId').value = book.id ?? '';
+      document.getElementById('editBookTitle').value = book.title;
+      document.getElementById('editBookAuthor').value = book.author;
+      document.getElementById('editPubDate').value = book.year;
+      showPage('editBook'); // FIX: real page redirect instead of a modal
+    }
+
+    document.getElementById('editBookForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('editBookId').value;
+      const updated = {
+        id,
+        title: document.getElementById('editBookTitle').value.trim(),
+        author: document.getElementById('editBookAuthor').value.trim(),
+        year: parseInt(document.getElementById('editPubDate').value, 10)
+      };
+      try {
+        const res = await fetch(`${ENDPOINTS.books}/${id}`, {
+          method: 'PUT',
+          headers: authHeaders(),
+          body: JSON.stringify(updated)
+        });
+        if (!res.ok) throw new Error();
+      } catch {
+        const books = localBooks();
+        const idx = books.findIndex(b => b.id === id);
+        if (idx !== -1) books[idx] = updated;
+        saveLocalBooks(books);
+      }
+      await loadBooks();
+      showPage('home');
+    });
+
+    async function deleteBook(book) {
+      if (!confirm(`Delete "${book.title}"?`)) return;
+      try {
+        const res = await fetch(`${ENDPOINTS.books}/${book.id}`, {
+          method: 'DELETE',
+          headers: authHeaders()
+        });
+        if (!res.ok) throw new Error();
+      } catch {
+        const books = localBooks().filter(b => b.id !== book.id);
+        saveLocalBooks(books);
+      }
+      await loadBooks();
+    }
+
+    // ---- Quotes: unified storage, full CRUD (add/edit/delete) -----------
+    const SEED_QUOTES = [
+      { id: 'seed-1', text: "Be yourself; everyone else is already taken.", author: "Oscar Wilde" },
+      { id: 'seed-2', text: "Whether you think you can or think you can't, you're right.", author: "Henry Ford" },
+      { id: 'seed-3', text: "Keep going.", author: "Winston Churchill" },
+      { id: 'seed-4', text: "If you're offered a seat on a rocket ship, don't ask what seat! Just get on.", author: "Sheryl Sandberg" },
+      { id: 'seed-5', text: "When I let go of what I am, I become what I might be.", author: "Lao Tzu" }
+    ];
+
+    function loadQuotesFromStorage() {
+      const stored = localStorage.getItem('quotes');
+      if (stored) return JSON.parse(stored);
+      saveQuotes(SEED_QUOTES); // FIX: seed quotes now live in the same
+                                // persisted store the add/edit/delete code uses,
+                                // instead of being separate static HTML.
+      return SEED_QUOTES;
+    }
+    function saveQuotes(quotes) { localStorage.setItem('quotes', JSON.stringify(quotes)); }
+
+    function renderQuotes() {
+      const quotes = loadQuotesFromStorage();
+      const list = document.getElementById('quotesList');
+      list.innerHTML = '';
+      quotes.forEach(q => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item quote-item mb-2';
+        li.innerHTML = `
+          <blockquote class="blockquote text-center">
+            <p class="mb-1 fst-italic">${escapeHtml(q.text)}</p>
+            <footer class="blockquote-footer fw-bold">${escapeHtml(q.author)}</footer>
+          </blockquote>
+          <div class="text-center mt-2">
+            <button class="btn btn-sm btn-outline-primary me-1 quote-edit">Edit</button>
+            <button class="btn btn-sm btn-outline-danger quote-delete">Delete</button>
+          </div>`;
+        li.querySelector('.quote-edit').addEventListener('click', () => startEditQuote(q));
+        li.querySelector('.quote-delete').addEventListener('click', () => deleteQuote(q.id)); // FIX: delete now implemented
+        list.appendChild(li);
+      });
+    }
+
+    function startEditQuote(q) { // FIX: edit now implemented
+      document.getElementById('quoteEditId').value = q.id;
+      document.getElementById('quoteText').value = q.text;
+      document.getElementById('quoteAuthor').value = q.author;
+      document.getElementById('quoteSubmitBtn').innerHTML = '<i class="fas fa-save"></i> Save Changes';
+      document.getElementById('quoteCancelBtn').classList.remove('d-none');
+    }
+
+    function resetQuoteForm() {
+      document.getElementById('quoteForm').reset();
+      document.getElementById('quoteEditId').value = '';
+      document.getElementById('quoteSubmitBtn').innerHTML = '<i class="fas fa-plus"></i> Add Quote';
+      document.getElementById('quoteCancelBtn').classList.add('d-none');
+    }
+    document.getElementById('quoteCancelBtn').addEventListener('click', resetQuoteForm);
+
+    document.getElementById('quoteForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const text = document.getElementById('quoteText').value.trim();
       const author = document.getElementById('quoteAuthor').value.trim();
+      const editId = document.getElementById('quoteEditId').value;
+      if (!text || !author) return;
 
-      if (text && author) {
-        quotes.push({ text, author });
-        loadQuotes();
-        e.target.reset();
-      }
-    };
-    const themeBtn = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-icon');
-
-    themeBtn.onclick = () => {
-      document.body.classList.toggle('dark-theme');
-      if (document.body.classList.contains('dark-theme')) {
-        themeIcon.classList.remove('fa-moon');
-        console.log(themeIcon.innerHTML = "Light")
-        themeIcon.classList.add('fa-sun');
+      const quotes = loadQuotesFromStorage();
+      if (editId) {
+        const idx = quotes.findIndex(q => q.id === editId);
+        if (idx !== -1) quotes[idx] = { id: editId, text, author };
       } else {
-        themeIcon.classList.remove('fa-sun');
-        themeIcon.innerHTML = "Dark"
-        themeIcon.classList.add('fa-moon');
+        quotes.push({ id: crypto.randomUUID(), text, author });
       }
-    };
+      saveQuotes(quotes);
+      renderQuotes();
+      resetQuoteForm();
+    });
 
-
-
-    document.getElementById('addBookBtn').onclick = () => {
-      const modal = new bootstrap.Modal(document.getElementById('addBookModal'));
-      document.getElementById('addBookForm').reset();
-      modal.show();
-    };
-
-    document.getElementById('Login').onclick = () => {
-      /*  let user = localStorage.getItem("user");
-        let UserData = JSON.parse(user);
-        if (UserData == null) { */
-      const modal = new bootstrap.Modal(document.getElementById('LoginModal'));
-      document.getElementById('LoginForm').reset();
-      modal.show();
+    function deleteQuote(id) {
+      const quotes = loadQuotesFromStorage().filter(q => q.id !== id);
+      saveQuotes(quotes);
+      renderQuotes();
     }
 
-
-
-
-    document.getElementById('addBookForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const title = document.getElementById('bookTitle').value.trim();
-      const author = document.getElementById('bookAuthor').value.trim();
-      const pubDateStr = document.getElementById('pubDate').value;
-      const year = parseInt(pubDateStr, 10);
-
-      const book = {
-        title,
-        author,
-        year
-      };
-
-      let books = JSON.parse(localStorage.getItem('books')) || [];
-
-      books.push(book);
-
-      localStorage.setItem('books', JSON.stringify(books));
-
-      getBooks();
-      const modalEl = document.getElementById('addBookModal');
-      const modal = bootstrap.Modal.getInstance(modalEl);
-      modal.hide();
-
-      /*  fetch('http://localhost:5296/api/blogposts/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(book)
-        })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Failed to add book: ' + response.status);
-            }
-            return response.json();
-          })
-          .then(data => {
-            localStorage.setItem("books", JSON.stringify(data))
-            getBooks();
-  
-            const modalEl = document.getElementById('addBookModal');
-            const modal = bootstrap.Modal.getInstance(modalEl);
-            modal.hide();
-            document.getElementById('addBookForm').reset();
-  
-          })
-          .catch(error => {
-            console.error('Error adding book:', error);
-          });  */
-    });
-
-
-
-
-    document.getElementById('register').addEventListener('click', function (e) {
-      e.preventDefault();
-
-      const UserData = {
-        Username: document.getElementById('Username').value.trim(),
-        Password: document.getElementById('Password').value.trim(),
-      };
-
-      if (UserData.Username !== "") {
-        let users = JSON.parse(localStorage.getItem('user'));
-        if (!Array.isArray(users)) {
-          users = [];
-        }
-
-        users.push(UserData);
-
-        localStorage.setItem('user', JSON.stringify(users));
-        getBooks();
-        const loginModalEl = document.getElementById('LoginModal');
-        const loginModal = bootstrap.Modal.getInstance(loginModalEl);
-        loginModal.hide();
-      }
-    });
-
-
-
-
-    document.getElementById('login_button').addEventListener('click', function (e) {
-      e.preventDefault();
-
-      const username = document.getElementById('Username').value.trim();
-      const password = document.getElementById('Password').value.trim();
-
-      if (username === '' || password === '') {
-        const alertDiv = document.getElementById('inputAlert');
-        alertDiv.classList.remove('d-none');
-        alertDiv.classList.add('d-block');
-        return;
-      } else {
-        const alertDiv = document.getElementById('inputAlert');
-        alertDiv.classList.remove('d-block');
-        alertDiv.classList.add('d-none');
-      }
-
-      let UserData = {
-        Username: username,
-        Password: password,
-      };
-
-      let users = JSON.parse(localStorage.getItem('user'));
-      if (!Array.isArray(users)) {
-        users = [];
-      }
-
-      const existingUser = users.find(user => user.Username === UserData.Username);
-
-      if (existingUser === undefined) {
-        const alertbutton = document.getElementById('alert_button');
-        alertbutton.classList.remove('d-none');
-        alertbutton.classList.add('d-block');
-        return;
-      }
-
-      fetch('https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(UserData)
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Login failed: ' + response.status);
-          }
-          return response.json();
-        })
-        .then(data => {
-          let updatedUsers = JSON.parse(localStorage.getItem('user'));
-          if (!Array.isArray(updatedUsers)) {
-            updatedUsers = [];
-          }
-          updatedUsers = updatedUsers.filter(u => u.Username !== UserData.Username);
-          updatedUsers.push({ Username: UserData.Username, token: data.token });
-
-          localStorage.setItem('user', JSON.stringify(updatedUsers));
-
-          getBooks();
-
-          const alertbutton = document.getElementById('alert_button');
-          alertbutton.classList.remove('d-block');
-          alertbutton.classList.add('d-none');
-
-          const loginModalEl = document.getElementById('LoginModal');
-          const loginModal = bootstrap.Modal.getInstance(loginModalEl);
-          loginModal.hide();
-        })
-        .catch(error => {
-          console.error('Error during login:', error);
-        });
-    });
-
-
-
-    function createAndAddBookCard(book) {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.style.width = '12rem';
-
-      card.innerHTML = `
- <div class="card-body">
-  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkLBB9QfyTHUdKm6uJLKtcrfbFz9Fp4kFtYpQy5ZUaLA&s=10" 
-       alt="Girl in a jacket" 
-       class="img-fluid" />
-  <h5 class="card-title books_title" style="font-family: Arial, Helvetica, sans-serif;" data-title=${book.title} id="title_id">${book.title}</h5>
-  <h6 class="card-subtitle mb-2 text-muted" style="font-family: Lato, sans-serif;">${book.author}</h6>  
-  <p class="card-text" style="font-family: 'Open Sans', sans-serif;">Published in ${book.year}</p>
-  <button class="btn btn-primary edit-btn" data-id="${book.id}">Edit</button>
-  <button class="btn btn-danger delete-btn" data-id="${book.id}">Delete</button>
-</div>
-  `;
-
-      document.querySelector('#bookCardsContainer').appendChild(card);
-
-      const editBtn = card.querySelector('.edit-btn');
-
-      editBtn.onclick = () => {
-        const modal = new bootstrap.Modal(document.getElementById('editBookModal'));
-        document.getElementById('EditBookForm').reset();
-        modal.show();
-      };
-
-      document.getElementById('EditBookForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const titleInput = document.getElementById("title_id");
-        const editbook_title = document.getElementById("editbookTitle");
-        const authorInput = document.getElementById("editBookAuthor");
-
-        const pubDateStr = document.getElementById('publish_year').value;
-        const year = parseInt(pubDateStr, 10);
-        let books_data = JSON.parse(localStorage.getItem("books")) || [];
-        let index = books_data.findIndex(books => books.title == titleInput.dataset.title)
-        if (index !== -1) {
-          const newBookData = {
-            title: editbook_title.value,
-            author: authorInput.value,
-            year: year
-          };
-          books_data[index] = newBookData;
-          localStorage.setItem("books", JSON.stringify(books_data));
-
-          const loginModalEl = document.getElementById('editBookModal');
-          const loginModal = bootstrap.Modal.getInstance(loginModalEl);
-
-          loginModal.hide();
-
-        } else {
-        }
-      })
-
-      /*  fetch(`http://localhost:5296/api/BlogPosts/${book.id}`, {
-          method: 'PUT', // Correct method for update
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(updatedBook)
-        })
-          .then(response => {
-            console.log('Response status:', response.status);
-            if (!response.ok) {
-              return response.text().then(text => { throw new Error('Failed to update: ' + text); });
-            }
-            if (response.status === 204) {
-              return null;
-            }
-            return response.json();
-          })
-          .then(data => {
-            console.log('Updated data:', data);
-            const modalEl = document.getElementById('editBookModal');
-            const modal = bootstrap.Modal.getInstance(modalEl);
-            modal.hide();
-            document.getElementById('addBookForm').reset();
-            location.reload;
-            loadBooks();
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            console.log('Error updating book: ' + error.message);
-          });   */
-
-
-
-      let deleteBtn = card.querySelector('.delete-btn');
-      deleteBtn.onclick = () => {
-        let booksData = JSON.parse(localStorage.getItem('books')) || [];
-
-        const searchCriteria = {
-          title: book.title,
-          author: book.author,
-          year: book.year
-        };
-
-        const index = booksData.findIndex(b =>
-          b.title === searchCriteria.title &&
-          b.author === searchCriteria.author &&
-          b.year === searchCriteria.year
-        );
-
-        if (index !== -1) {
-          booksData.splice(index, 1);
-
-          localStorage.setItem('books', JSON.stringify(booksData));
-
-          card.remove();
-
-          alert('Book deleted successfully');
-        } else {
-          alert('Book not found in storage');
-        }
-      };
-
-      /*  fetch(`http://localhost:5296/api/BlogPosts/${book.id}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(DeleteBook) // remove this if not needed
-        })
-          .then(response => {
-            console.log('Response status:', response.status);
-            if (!response.ok) {
-              return response.text().then(text => {
-                throw new Error('Failed to delete: ' + text);
-              });
-            }
-            getBooks();
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            alert('Error deleting book: ' + error.message);
-          }); */
-    };
-
-
-
-    document.getElementById('LoginForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const username = document.getElementById('Username').value;
-      const password = document.getElementById('Password').value;
-
-      fetch('http://localhost:5296/api/blogposts/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ username, password })
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Login failed: ' + response.status);
-          }
-          return response.json();
-        })
-        .then(data => {
-          console.log('Login successful:', data);
-          const loginModalEl = document.getElementById('LoginModal');
-          const loginModal = bootstrap.Modal.getInstance(loginModalEl);
-          loginModal.hide();
-        })
-        .catch(error => {
-          console.error('Error during login:', error);
-          alert('Login failed. Please check your credentials.');
-        });
-    });
-
-
-
-
-    function getBooks() {
-      const users = JSON.parse(localStorage.getItem('user')) || [];
-
-      const loggedInUser = users.find(u => u.token && u.token !== '');
-
-      if (loggedInUser) {
-        document.getElementById('addBookBtn').disabled = false;
-        bookCardsContainer.innerHTML = '';
-
-        let data = JSON.parse(localStorage.getItem('books'));
-        if (data) {
-          data.forEach(book => {
-            createAndAddBookCard(book);
-            New_book();
-          });
-        }
-      } else {
-        document.getElementById('addBookBtn').disabled = true;
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      getBooks();
-
-      const editBookModalEl = document.getElementById('editBookModal');
-      if (editBookModalEl) {
-        editBookModalEl.addEventListener('hidden.bs.modal', () => {
-          getBooks();
-        });
-      }
-    });
-
-
-
-    document.addEventListener('DOMContentLoaded', () => {
-      getBooks();
-
-      const editBookModalEl = document.getElementById('editBookModal');
-      if (editBookModalEl) {
-        editBookModalEl.addEventListener('hidden.bs.modal', () => {
-          getBooks();
-        });
-      }
-
-      /* const user = JSON.parse(localStorage.getItem('user'));
-       if (user !== null && user.data.token !== "") {
-         toggleLoginLogout(true);
-       } else {
-         toggleLoginLogout(false);
-       } */
-
-    });
-
-    window.onload = () => {
-      showPage('home');
-      loadQuotes();
-    };
-
-
+    // ---- Init -------------------------------------------------------------
+    setLoggedInUI();
+    loadBooks();
+    renderQuotes();
+    showPage('home');
   </script>
-  <app-root ng-version="20.3.28" ngh="0" ng-server-context="ssg"></app-root>
-
-  <script src="main-UHKZM5QJ.js" type="module"></script>
-
-  <script id="ng-state" type="application/json">{"__nghData__":[{}]}</script>
 </body>
 
 </html>
