@@ -1,27 +1,16 @@
 using BlogApi.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-// 1. Resolve content root & check browser path prior to builder creation
-var contentRoot = Directory.GetCurrentDirectory();
-var browserPath = Path.Combine(contentRoot, "dist", "bookstore", "browser");
-var hasCustomWebRoot = Directory.Exists(browserPath);
+var builder = WebApplication.CreateBuilder(args);
 
-// 2. Pass WebRootPath into WebApplicationOptions BEFORE initialization
-var builder = WebApplication.CreateBuilder(new WebApplicationOptions
-{
-    Args = args,
-    ContentRootPath = contentRoot,
-    WebRootPath = hasCustomWebRoot ? browserPath : null
-});
-
-// 3. Configure JWT Authentication (with fallback to avoid startup crash if env vars are delayed)
-var jwtKey = builder.Configuration["Jwt:Key"] ?? "TemporaryFallbackSecretKey1234567890!";
-var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "https://localhost";
-var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "https://localhost";
+// 1. Configure JWT Authentication
+var jwtKey = builder.Configuration["Jwt:Key"] 
+    ?? throw new InvalidOperationException("JWT Secret Key 'Jwt:Key' is missing from configuration.");
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net";
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -38,23 +27,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// 4. Setup CORS
+// 2. Setup CORS
+var azureOrigin = "https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net";
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAzureWebsites", policy =>
-        policy.WithOrigins("https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net")
+        policy.WithOrigins(azureOrigin, "http://localhost:4200", "https://localhost:7000")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials());
 });
 
-// 5. Database Connection String Setup
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-    ?? builder.Configuration["ConnectionStrings:DefaultConnection"];
+// 3. Database Setup
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 if (string.IsNullOrEmpty(connectionString))
 {
-    throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured in Azure Environment Variables.");
+    throw new InvalidOperationException("Connection string 'DefaultConnection' is missing from configuration.");
 }
 
 builder.Services.AddDbContext<BlogDbContext>(options =>
@@ -75,27 +65,11 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// 6. Serve static files from custom SPA directory or default wwwroot
-if (hasCustomWebRoot)
-{
-    var fileProvider = new PhysicalFileProvider(browserPath);
-    
-    app.UseDefaultFiles(new DefaultFilesOptions
-    {
-        FileProvider = fileProvider
-    });
+// 4. Standard Static Files Setup (Serves directly from wwwroot)
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
-    app.UseStaticFiles(new StaticFileOptions
-    {
-        FileProvider = fileProvider
-    });
-}
-else
-{
-    app.UseDefaultFiles();
-    app.UseStaticFiles();
-}
-
+// 5. Middleware Pipeline
 app.UseRouting();
 app.UseCors("AllowAzureWebsites");
 app.UseAuthentication();
@@ -103,17 +77,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// 7. Map fallback for Single Page Application routing
-if (hasCustomWebRoot)
-{
-    app.MapFallbackToFile("index.html", new StaticFileOptions
-    {
-        FileProvider = new PhysicalFileProvider(browserPath)
-    });
-}
-else
-{
-    app.MapFallbackToFile("index.html");
-}
+// 6. SPA Routing Fallback
+app.MapFallbackToFile("index.html");
 
 app.Run();
