@@ -8,9 +8,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 
-
-
-
 namespace BlogApi.Controllers
 {
     [ApiController]
@@ -32,7 +29,6 @@ namespace BlogApi.Controllers
             return Ok(posts);
         }
 
-
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -42,18 +38,16 @@ namespace BlogApi.Controllers
             return Ok(post);
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> Create(BlogPost post)
+        public async Task<IActionResult> Create([FromBody] BlogPost post)
         {
             _context.BlogPosts.Add(post);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(Get), new { id = post.Id }, post);
         }
 
-
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, BlogPost post)
+        public async Task<IActionResult> Update(int id, [FromBody] BlogPost post)
         {
             if (id != post.Id)
                 return BadRequest();
@@ -61,6 +55,7 @@ namespace BlogApi.Controllers
             var existingPost = await _context.BlogPosts.FindAsync(id);
             if (existingPost == null)
                 return NotFound();
+
             existingPost.Title = post.Title;
             existingPost.Author = post.Author;
             existingPost.Year = post.Year;
@@ -78,7 +73,6 @@ namespace BlogApi.Controllers
                     throw;
             }
         }
-
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
@@ -99,8 +93,6 @@ namespace BlogApi.Controllers
         }
     }
 
-
-
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
@@ -114,9 +106,8 @@ namespace BlogApi.Controllers
             _context = context;
         }
 
-
-
-        [HttpGet]
+        // GET: api/auth/users
+        [HttpGet("users")]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _context.Users
@@ -126,11 +117,10 @@ namespace BlogApi.Controllers
             return Ok(users);
         }
 
-
+        // POST: api/auth/register
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-
             if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
                 return BadRequest("Username and password are required.");
 
@@ -138,10 +128,11 @@ namespace BlogApi.Controllers
             if (exists)
                 return Conflict("Username already taken.");
 
+            // For production, hash the password before storing
             var user = new User
             {
                 Username = request.Username,
-                Password = request.Password
+                Password = request.Password // Replace with hashed password
             };
 
             _context.Users.Add(user);
@@ -150,24 +141,30 @@ namespace BlogApi.Controllers
             return Ok(new { user.Id, user.Username });
         }
 
-
-
+        // POST: api/auth/login
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest loginRequest)
+        public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
             if (string.IsNullOrEmpty(loginRequest.Username) || string.IsNullOrEmpty(loginRequest.Password))
-            {
                 return Unauthorized();
-            }
+
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == loginRequest.Username);
+            if (user == null)
+                return Unauthorized();
+
+            // For production, verify hashed password
+            if (user.Password != loginRequest.Password)
+                return Unauthorized();
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, loginRequest.Username),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
-var jwtKey = _configuration["Jwt:Key"]
-    ?? throw new InvalidOperationException("Jwt:Key is not configured.");
-var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+            var jwtKey = _configuration["Jwt:Key"]
+                ?? throw new InvalidOperationException("Jwt:Key is not configured");
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
@@ -181,7 +178,6 @@ var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             return Ok(new { token = tokenString });
         }
     }
-
 }
 
 public class LoginRequest
