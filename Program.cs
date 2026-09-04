@@ -1,5 +1,7 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
 using BlogApi.Data; // Adjust namespace to match your project structure
 
 // 1. Resolve and validate the frontend build directory path
@@ -15,25 +17,45 @@ var webOptions = new WebApplicationOptions
 var builder = WebApplication.CreateBuilder(webOptions);
 
 // 2. Configure Database Context
-// Safely reads Azure App Service connection settings or local appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("BlogDb") 
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// 3. Register Controllers and OpenAPI/Swagger Services
+// 3. Configure JWT Authentication Services
+var jwtKey = builder.Configuration["Jwt:Key"] 
+    ?? throw new InvalidOperationException("JWT Secret Key is missing from configuration.");
+var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+var jwtAudience = builder.Configuration["Jwt:Audience"];
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+// 4. Register Controllers and Services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-// 4. Configure HTTP Request Pipeline
-if (app.Environment.IsDevelopment())
-{
-   
-}
-
+// 5. Configure HTTP Request Pipeline
 app.UseHttpsRedirection();
 
 // Serve static assets (JS, CSS, images) from the configured WebRootPath
@@ -43,13 +65,15 @@ if (!string.IsNullOrEmpty(app.Environment.WebRootPath))
 }
 
 app.UseRouting();
+
+// CRITICAL: UseAuthentication MUST be placed before UseAuthorization
+app.UseAuthentication();
 app.UseAuthorization();
 
-// 5. Map API Controllers
+// 6. Map API Controllers
 app.MapControllers();
 
-// 6. SPA Fallback Routing for Angular / React / Vue
-// Ensures browser refreshes on deep routes (e.g., /books/12) serve index.html
+// 7. SPA Fallback Routing for Angular / React / Vue
 if (!string.IsNullOrEmpty(app.Environment.WebRootPath))
 {
     app.MapFallbackToFile("index.html");
