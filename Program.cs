@@ -7,10 +7,15 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Configure JWT Authentication
+// Supports both 'Jwt:Key' and 'Jwt__Key' (Azure Linux format)
 var jwtKey = builder.Configuration["Jwt:Key"] 
-    ?? throw new InvalidOperationException("JWT Secret Key 'Jwt:Key' is missing from configuration.");
-var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net";
-var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net";
+    ?? throw new InvalidOperationException("JWT Secret Key 'Jwt:Key' (or 'Jwt__Key') is missing from configuration.");
+
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] 
+    ?? "https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net";
+
+var jwtAudience = builder.Configuration["Jwt:Audience"] 
+    ?? "https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net";
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -28,28 +33,36 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 // 2. Setup CORS
-var azureOrigin = "https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net";
+var allowedOrigins = new[]
+{
+    "https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net",
+    "http://localhost:4200",
+    "https://localhost:7000"
+};
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAzureWebsites", policy =>
-        policy.WithOrigins(azureOrigin, "http://localhost:4200", "https://localhost:7000")
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials());
 });
 
 // 3. Database Setup
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-if (string.IsNullOrEmpty(connectionString))
-{
-    throw new InvalidOperationException("Connection string 'DefaultConnection' is missing from configuration.");
-}
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' is missing from configuration.");
 
 builder.Services.AddDbContext<BlogDbContext>(options =>
 {
-    options.UseSqlServer(connectionString);
+    options.UseSqlServer(connectionString, sqlOptions =>
+    {
+        // Enables auto-retry for transient Azure SQL connection hiccups
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null);
+    });
 });
 
 builder.Services.AddControllers();
@@ -57,6 +70,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
+// 4. Exception Handling
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/error");
@@ -65,19 +79,23 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// 4. Standard Static Files Setup (Serves directly from wwwroot)
+// 5. Serve Static Files (Frontend SPA Assets)
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-// 5. Middleware Pipeline
+// 6. Middleware Execution Pipeline Order
 app.UseRouting();
+
+// CORS MUST be applied after UseRouting and before UseAuthentication/UseAuthorization
 app.UseCors("AllowAzureWebsites");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
+// 7. Route Endpoints
 app.MapControllers();
 
-// 6. SPA Routing Fallback
+// 8. Single Page Application (SPA) Fallback Route
 app.MapFallbackToFile("index.html");
 
 app.Run();
