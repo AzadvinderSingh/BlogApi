@@ -1,101 +1,44 @@
-using BlogApi.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using BlogApi.Data; // Adjust namespace to match your project structure
 
-var builder = WebApplication.CreateBuilder(args);
-
-// 1. Configure JWT Authentication
-// Supports both 'Jwt:Key' and 'Jwt__Key' (Azure Linux format)
-var jwtKey = builder.Configuration["Jwt:Key"] 
-    ?? throw new InvalidOperationException("JWT Secret Key 'Jwt:Key' (or 'Jwt__Key') is missing from configuration.");
-
-var jwtIssuer = builder.Configuration["Jwt:Issuer"] 
-    ?? "https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net";
-
-var jwtAudience = builder.Configuration["Jwt:Audience"] 
-    ?? "https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net";
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtIssuer,
-            ValidAudience = jwtAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-        };
-    });
-
-// 2. Setup CORS
-var allowedOrigins = new[]
+// 1. Configure WebApplicationOptions before building the app
+var webOptions = new WebApplicationOptions
 {
-    "https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net",
-    "http://localhost:4200",
-    "https://localhost:7000"
+    Args = args,
+    // Safely sets the static file path without calling builder.WebHost.UseWebRoot()
+    WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "dist", "bookstore", "browser")
 };
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAzureWebsites", policy =>
-        policy.WithOrigins(allowedOrigins)
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials());
-});
+var builder = WebApplication.CreateBuilder(webOptions);
 
-// 3. Database Setup
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' is missing from configuration.");
+// 2. Configure Database Context
+// In Azure, ConnectionStrings:BlogDb (or ConnectionStrings:DefaultConnection) 
+// overrides appsettings.json when configured in App Service Settings.
+var connectionString = builder.Configuration.GetConnectionString("BlogDb") 
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<BlogDbContext>(options =>
-{
-    options.UseSqlServer(connectionString, sqlOptions =>
-    {
-        // Enables auto-retry for transient Azure SQL connection hiccups
-        sqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 5,
-            maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorNumbersToAdd: null);
-    });
-});
+    options.UseSqlServer(connectionString));
 
+// 3. Register Controllers and Services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-// 4. Exception Handling
-if (!app.Environment.IsDevelopment())
+// 4. Configure HTTP Request Pipeline
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/error");
-    app.UseHsts();
+ 
 }
 
 app.UseHttpsRedirection();
 
-// 5. Serve Static Files (Frontend SPA Assets)
-app.UseDefaultFiles();
+// Enables serving static files (e.g., Angular/React assets) from the custom web root
 app.UseStaticFiles();
 
-// 6. Middleware Execution Pipeline Order
-app.UseRouting();
-
-// CORS MUST be applied after UseRouting and before UseAuthentication/UseAuthorization
-app.UseCors("AllowAzureWebsites");
-
-app.UseAuthentication();
 app.UseAuthorization();
 
-// 7. Route Endpoints
 app.MapControllers();
-
-// 8. Single Page Application (SPA) Fallback Route
-app.MapFallbackToFile("index.html");
 
 app.Run();
