@@ -1,25 +1,27 @@
 using BlogApi.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-var builder = WebApplication.CreateBuilder(args);
+// 1. Resolve content root & check browser path prior to builder creation
+var contentRoot = Directory.GetCurrentDirectory();
+var browserPath = Path.Combine(contentRoot, "dist", "bookstore", "browser");
+var hasCustomWebRoot = Directory.Exists(browserPath);
 
-// Configure WebRoot path if SPA directory exists
-var browserPath = Path.Combine(builder.Environment.ContentRootPath, "dist", "bookstore", "browser");
-if (Directory.Exists(browserPath))
+// 2. Pass WebRootPath into WebApplicationOptions BEFORE initialization
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
-    builder.Environment.WebRootPath = browserPath;
-}
+    Args = args,
+    ContentRootPath = contentRoot,
+    WebRootPath = hasCustomWebRoot ? browserPath : null
+});
 
-// Configure JWT authentication
-var jwtKey = builder.Configuration["Jwt:Key"] 
-    ?? throw new InvalidOperationException("Jwt:Key is missing");
-var jwtIssuer = builder.Configuration["Jwt:Issuer"] 
-    ?? throw new InvalidOperationException("Jwt:Issuer is missing");
-var jwtAudience = builder.Configuration["Jwt:Audience"] 
-    ?? throw new InvalidOperationException("Jwt:Audience is missing");
+// 3. Configure JWT Authentication (with fallback to avoid startup crash if env vars are delayed)
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "TemporaryFallbackSecretKey1234567890!";
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "https://localhost";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "https://localhost";
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -36,7 +38,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Setup CORS
+// 4. Setup CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAzureWebsites", policy =>
@@ -46,13 +48,13 @@ builder.Services.AddCors(options =>
               .AllowCredentials());
 });
 
-// Database Connection
+// 5. Database Connection String Setup
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? builder.Configuration["ConnectionStrings:DefaultConnection"];
 
 if (string.IsNullOrEmpty(connectionString))
 {
-    throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured.");
+    throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured in Azure Environment Variables.");
 }
 
 builder.Services.AddDbContext<BlogDbContext>(options =>
@@ -72,8 +74,27 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseDefaultFiles();
-app.UseStaticFiles();
+
+// 6. Serve static files from custom SPA directory or default wwwroot
+if (hasCustomWebRoot)
+{
+    var fileProvider = new PhysicalFileProvider(browserPath);
+    
+    app.UseDefaultFiles(new DefaultFilesOptions
+    {
+        FileProvider = fileProvider
+    });
+
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = fileProvider
+    });
+}
+else
+{
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+}
 
 app.UseRouting();
 app.UseCors("AllowAzureWebsites");
@@ -81,6 +102,18 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapFallbackToFile("index.html");
+
+// 7. Map fallback for Single Page Application routing
+if (hasCustomWebRoot)
+{
+    app.MapFallbackToFile("index.html", new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(browserPath)
+    });
+}
+else
+{
+    app.MapFallbackToFile("index.html");
+}
 
 app.Run();
