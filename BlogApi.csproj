@@ -19,6 +19,7 @@
          of Microsoft.AspNetCore.Authentication.JwtBearer. Pinning it separately to 8.2.1
          created a version conflict with the Microsoft.IdentityModel.Tokens version
          JwtBearer 9.0.0 actually needs, causing the FileNotFoundException at runtime. -->
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
   </ItemGroup>
 
   <ItemGroup>
