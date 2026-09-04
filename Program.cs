@@ -1,28 +1,24 @@
 using BlogApi.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System.IO;
 
-var contentRoot = Directory.GetCurrentDirectory();
-var browserPath = Path.Combine(contentRoot, "dist", "bookstore", "browser");
-var webRootExists = Directory.Exists(browserPath);
+var builder = WebApplication.CreateBuilder(args);
 
-var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+// Configure WebRoot path if SPA directory exists
+var browserPath = Path.Combine(builder.Environment.ContentRootPath, "dist", "bookstore", "browser");
+if (Directory.Exists(browserPath))
 {
-    Args = args,
-    ContentRootPath = contentRoot,
-    WebRootPath = webRootExists ? browserPath : null
-});
+    builder.Environment.WebRootPath = browserPath;
+}
 
 // Configure JWT authentication
-var jwtKey = builder.Configuration["Jwt:Key"]
+var jwtKey = builder.Configuration["Jwt:Key"] 
     ?? throw new InvalidOperationException("Jwt:Key is missing");
-var jwtIssuer = builder.Configuration["Jwt:Issuer"]
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] 
     ?? throw new InvalidOperationException("Jwt:Issuer is missing");
-var jwtAudience = builder.Configuration["Jwt:Audience"]
+var jwtAudience = builder.Configuration["Jwt:Audience"] 
     ?? throw new InvalidOperationException("Jwt:Audience is missing");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -50,33 +46,24 @@ builder.Services.AddCors(options =>
               .AllowCredentials());
 });
 
-// Retrieve connection string from environment variables (Azure App Settings)
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Database Connection
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+    ?? builder.Configuration["ConnectionStrings:DefaultConnection"];
+
 if (string.IsNullOrEmpty(connectionString))
 {
     throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured.");
 }
 
-// Register DbContext
 builder.Services.AddDbContext<BlogDbContext>(options =>
 {
     options.UseSqlServer(connectionString);
 });
 
-// Logging for debugging (optional)
-if (builder.Environment.IsDevelopment())
-{
-    var logger = LoggerFactory.Create(b => b.AddConsole()).CreateLogger("Startup");
-    logger.LogInformation("Connection string: {ConnectionString}", connectionString);
-}
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
-
-app.UseDefaultFiles();
-app.UseStaticFiles();
 
 if (!app.Environment.IsDevelopment())
 {
@@ -85,6 +72,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseRouting();
 app.UseCors("AllowAzureWebsites");
 app.UseAuthentication();
