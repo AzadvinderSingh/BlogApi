@@ -25,15 +25,13 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
 // 3. Register Controllers and OpenAPI/Swagger Services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 // 4. Configure HTTP Request Pipeline
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+   
 }
 
 app.UseHttpsRedirection();
