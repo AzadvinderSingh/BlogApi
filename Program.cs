@@ -106,16 +106,23 @@ app.UseAuthorization();
 // 7. Map API Controllers
 app.MapControllers();
 
-// 8. Error endpoint used by UseExceptionHandler above
-app.Map("/error", (HttpContext context) =>
+// 8. Error endpoint used by UseExceptionHandler above.
+// Logs the real exception server-side always, and only exposes
+// the message in the response body when running in Development.
+app.Map("/error", (HttpContext context, ILogger<Program> logger, IWebHostEnvironment env) =>
 {
     var feature = context.Features.Get<IExceptionHandlerFeature>();
     var exception = feature?.Error;
 
+    if (exception != null)
+    {
+        logger.LogError(exception, "Unhandled exception occurred while processing {Path}", feature?.Path);
+    }
+
     return Results.Problem(
         title: "An unexpected error occurred.",
         statusCode: StatusCodes.Status500InternalServerError,
-        detail: app.Environment.IsDevelopment() ? exception?.Message : null
+        detail: env.IsDevelopment() ? exception?.ToString() : null
     );
 });
 
