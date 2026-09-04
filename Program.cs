@@ -1,33 +1,33 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using BlogApi.Data; // Adjust namespace to match your project structure
 
-// 1. Resolve and validate the frontend build directory path
+// 1. Resolve the frontend build directory path (robust for published apps)
 var staticPath = Path.Combine(AppContext.BaseDirectory, "dist", "bookstore", "browser");
 
 var webOptions = new WebApplicationOptions
 {
     Args = args,
-    // Sets WebRootPath safely during initialization if the folder exists
     WebRootPath = Directory.Exists(staticPath) ? staticPath : null
 };
 
 var builder = WebApplication.CreateBuilder(webOptions);
 
-// 2. Configure Database Context
-var connectionString = builder.Configuration.GetConnectionString("BlogDb") 
-    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+// 2. Configure JWT settings (fail fast if missing)
+var jwtKey = builder.Configuration["Jwt:Key"]
+    ?? throw new InvalidOperationException("Jwt:Key is missing from configuration.");
+var jwtIssuer = builder.Configuration["Jwt:Issuer"]
+    ?? throw new InvalidOperationException("Jwt:Issuer is missing from configuration.");
+var jwtAudience = builder.Configuration["Jwt:Audience"]
+    ?? throw new InvalidOperationException("Jwt:Audience is missing from configuration.");
 
-builder.Services.AddDbContext<BlogDbContext>(options =>
-    options.UseSqlServer(connectionString));
-
-// 3. Configure JWT Authentication Services
-var jwtKey = builder.Configuration["Jwt:Key"] 
-    ?? throw new InvalidOperationException("JWT Secret Key is missing from configuration.");
-var jwtIssuer = builder.Configuration["Jwt:Issuer"];
-var jwtAudience = builder.Configuration["Jwt:Audience"];
+if (Encoding.UTF8.GetByteCount(jwtKey) < 32)
+{
+    throw new InvalidOperationException("Jwt:Key must be at least 32 bytes (256 bits) for HMAC-SHA256.");
+}
 
 builder.Services.AddAuthentication(options =>
 {
@@ -49,31 +49,77 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// 4. Register Controllers and Services
+// 3. Configure CORS
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? new[] { "https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net" };
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAzureWebsites", policy =>
+        policy.WithOrigins(allowedOrigins)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials());
+});
+
+// 4. Configure Database Context
+var connectionString = builder.Configuration.GetConnectionString("BlogDb")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'BlogDb' or 'DefaultConnection' is not configured.");
+
+builder.Services.AddDbContext<BlogDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
+// 5. Register Controllers and Services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
-// 5. Configure HTTP Request Pipeline
+// 6. Configure HTTP Request Pipeline
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/error");
+    app.UseHsts();
+}
+
 app.UseHttpsRedirection();
 
-// Serve static assets (JS, CSS, images) from the configured WebRootPath
 if (!string.IsNullOrEmpty(app.Environment.WebRootPath))
 {
+    app.UseDefaultFiles();
     app.UseStaticFiles();
 }
 
 app.UseRouting();
+app.UseCors("AllowAzureWebsites");
 
 // CRITICAL: UseAuthentication MUST be placed before UseAuthorization
 app.UseAuthentication();
 app.UseAuthorization();
 
-// 6. Map API Controllers
+// 7. Map API Controllers
 app.MapControllers();
 
-// 7. SPA Fallback Routing for Angular / React / Vue
+// 8. Error endpoint used by UseExceptionHandler above
+app.Map("/error", (HttpContext context) =>
+{
+    var feature = context.Features.Get<IExceptionHandlerFeature>();
+    var exception = feature?.Error;
+
+    return Results.Problem(
+        title: "An unexpected error occurred.",
+        statusCode: StatusCodes.Status500InternalServerError,
+        detail: app.Environment.IsDevelopment() ? exception?.Message : null
+    );
+});
+
+// 9. SPA Fallback Routing for Angular / React / Vue
 if (!string.IsNullOrEmpty(app.Environment.WebRootPath))
 {
     app.MapFallbackToFile("index.html");
