@@ -49,6 +49,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+var netlifyCorsPolicy = "AllowNetlifyApp";
+
 // 3. Configure CORS
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
     ?? new[] { "https://books123-b2fqgpcgcsghb2f8.indiasouthcentral-01.azurewebsites.net" };
@@ -60,6 +62,17 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials());
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: netlifyCorsPolicy, policy =>
+    {
+        policy.WithOrigins("https://elaborate-paprenjak-eb570a.netlify.app/") // Replace with your exact Netlify domain
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+              ..AllowCredentials();
+    });
 });
 
 // 4. Configure Database Context
@@ -99,12 +112,43 @@ if (!string.IsNullOrEmpty(app.Environment.WebRootPath))
 app.UseRouting();
 app.UseCors("AllowAzureWebsites");
 
+app.UseCors(netlifyCorsPolicy);
+
 // CRITICAL: UseAuthentication MUST be placed before UseAuthorization
 app.UseAuthentication();
 app.UseAuthorization();
 
 // 7. Map API Controllers
 app.MapControllers();
+<<<<<<< HEAD
+
+// 8. Error endpoint used by UseExceptionHandler above.
+// Logs the real exception server-side always, and only exposes
+// the message in the response body when running in Development.
+app.Map("/error", (HttpContext context, ILogger<Program> logger, IWebHostEnvironment env) =>
+{
+    var feature = context.Features.Get<IExceptionHandlerFeature>();
+    var exception = feature?.Error;
+
+    if (exception != null)
+    {
+        logger.LogError(exception, "Unhandled exception occurred while processing {Path}", feature?.Path);
+    }
+
+    return Results.Problem(
+        title: "An unexpected error occurred.",
+        statusCode: StatusCodes.Status500InternalServerError,
+        detail: env.IsDevelopment() ? exception?.ToString() : null
+    );
+});
+
+// 9. SPA Fallback Routing for Angular / React / Vue
+if (!string.IsNullOrEmpty(app.Environment.WebRootPath))
+{
+    app.MapFallbackToFile("index.html");
+}
+=======
+>>>>>>> 0328a3bd76fe5b3e00e34eedb765761b1854787b
 
 // 8. Error endpoint used by UseExceptionHandler above.
 // Logs the real exception server-side always, and only exposes
