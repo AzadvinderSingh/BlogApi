@@ -120,8 +120,6 @@ app.UseAuthorization();
 
 // 7. Map API Controllers
 app.MapControllers();
-<<<<<<< HEAD
-
 // 8. Error endpoint used by UseExceptionHandler above.
 // Logs the real exception server-side always, and only exposes
 // the message in the response body when running in Development.
@@ -147,8 +145,6 @@ if (!string.IsNullOrEmpty(app.Environment.WebRootPath))
 {
     app.MapFallbackToFile("index.html");
 }
-=======
->>>>>>> 0328a3bd76fe5b3e00e34eedb765761b1854787b
 
 // 8. Error endpoint used by UseExceptionHandler above.
 // Logs the real exception server-side always, and only exposes
